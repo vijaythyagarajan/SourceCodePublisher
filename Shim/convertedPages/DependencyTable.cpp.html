@@ -1,0 +1,221 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="DependencyTable.h.html">DependencyTable.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+<div class ="toggleCommentDisplay">///////////////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Dependency table - Dependency Analyser Package   (Source Code Publisher)     //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019              //</div>
+<div class ="toggleCommentDisplay">///////////////////////////////////////////////////////////////////////////////////</div>
+#include&lt;iostream&gt;
+#include&lt;string&gt;
+#include&lt;unordered_map&gt;
+
+#include"DependencyTable.h"
+
+<div class ="toggleCommentDisplay">///&lt;--- adding dependency file to the fileList under each file name  in the dependency table -----&gt;</div>
+ <span class='toggleMethodDisplay'>bool DependencyTable::addDependencyToFileName(std::string fileName, const std::string & files) {
+	if (!fileName.empty()) {
+		if (hasEntry(fileName)) {
+			auto iterator = table_.find(fileName);
+			std::string copy = files;
+			copy.erase(0, 1);
+			copy.pop_back();
+			if (std::find(iterator-&gt;second.begin(), iterator-&gt;second.end(), copy) == iterator-&gt;second.end())
+			iterator-&gt;second.push_back(copy);
+			return true;
+		}
+		else {
+			std::vector&lt;std::string&gt; fileList;
+			std::string copy = files;
+			copy.erase(0, 1);
+			copy.pop_back();
+			if (std::find(fileList.begin(), fileList.end(), copy) == fileList.end()) {
+				fileList.push_back(copy);
+				table_[fileName] = fileList;
+				fileList.clear();
+			}
+			return true;
+		}
+	}
+	return false;
+}</span>
+<div class ="toggleCommentDisplay">///&lt;--- removing all the dependencies against the file Name specified from the dependency table  -----&gt;</div>
+ <span class='toggleMethodDisplay'>bool DependencyTable::removeDependencyForFileName(std::string const & fileName) {
+	if (!fileName.empty()) {
+		if (hasEntry(fileName)) {
+			auto iterator = table_.find(fileName);
+			iterator-&gt;second.clear();
+			return true;
+		}
+	}
+	return false;
+}</span>
+<div class ="toggleCommentDisplay">///&lt;--- to get all the dependency file Name as a vector from the dependency table  -----&gt;</div>
+ <span class='toggleMethodDisplay'>const filesList DependencyTable::getAllDependenciesForFileName(std::string const & fileName) {
+	std::vector&lt;std::string &gt;v ;
+	if (!fileName.empty()) {
+		if (hasEntry(fileName)) {
+			auto iterator = table_.find(fileName);
+			return iterator-&gt;second;
+		}
+	}
+	return v;
+}</span>
+
+<div class ="toggleCommentDisplay">///&lt;--- OperatorOverloading of [] to get all the dependencies of a file from the depenedency table -----&gt;</div>
+ <span class='toggleMethodDisplay'>const filesList & DependencyTable::operator[](const std::string & fileName) {
+	auto iterator = table_.find(fileName);
+	return iterator-&gt;second;
+}</span>
+
+<div class ="toggleCommentDisplay">///&lt;--- Clear the depenendency table ie., to make it empty -----&gt;</div>
+ <span class='toggleMethodDisplay'>void DependencyTable::clearTable() {
+	table_.clear();
+}</span>
+<div class ="toggleCommentDisplay">///&lt;---- return the table ----&gt;</div>
+std::unordered_map&lt; std::string, filesList&gt; DependencyTable::getTable()
+ <span class='toggleMethodDisplay'>{
+	return table_;
+}</span>
+
+<div class ="toggleCommentDisplay">///&lt;----- method to display the dependecies for the file -----&gt;</div>
+ <span class='toggleMethodDisplay'>void DependencyTable::DisplayDependenciesForFileName(std::string const & fileName) {
+	if (!fileName.empty()) {
+		if (hasEntry(fileName)) {
+			auto iterator = table_.find(fileName);
+			std::cout &lt;&lt; "File Name : " &lt;&lt; fileName &lt;&lt; std::endl;
+			for (auto files : (iterator-&gt;second)) {
+				std::cout &lt;&lt; files &lt;&lt; std::endl;
+			}
+		}
+	}
+}</span>
+
+<div class ="toggleCommentDisplay">/// &lt;------- check if the dependency table has any an entry for the file name</div>
+bool DependencyTable::hasDependency(std::string const & fileName)
+ <span class='toggleMethodDisplay'>{
+	return hasEntry(fileName);
+}</span>
+
+<div class ="toggleCommentDisplay">///&lt;--- to check if the specified file name has an entry in the dependency tavble -----&gt;</div>
+ <span class='toggleMethodDisplay'>bool DependencyTable::hasEntry(std::string const & fileName) {
+
+	if (! fileName.empty()) {
+		if (table_.find(fileName) != table_.end()) {
+			return true;
+		}
+	}
+	return false;
+}</span>
+
+<div class ="toggleCommentDisplay">/// &lt;------ Test stub for dependency table --------&gt;</div>
+#ifdef DEPENDENCY_TABLE_TEST
+ <span class='toggleMethodDisplay'>iint main(int argc, char* argv[]) {
+	<div class ="toggleCommentDisplay">/// creating the dependency table object as d1</div>
+	DependencyTable d1;
+	<div class ="toggleCommentDisplay">/// geting the files and storing them in a vector</div>
+	std::vector&lt;std::string&gt; f1;
+	for (int i = 0; i &lt; argc; i++) {
+		f1.pushBack(arrgv[i]);
+	}
+	<div class ="toggleCommentDisplay">/// adding the dependency of file to a file name called newlist</div>
+	for (auto file : f1) {
+		d1.addDependencyToFileName("newList", file);
+	}
+	<div class ="toggleCommentDisplay">/// geting ghe dependencies for the file name newList</div>
+	std::vector&lt;std::string&gt; f2 = d1.getAllDependenciesForFileName("newList");
+	<div class ="toggleCommentDisplay">/// displaying the dependecies of the file </div>
+	auto it1 = f2.begin();
+	while (it1 != f2.end()) {
+		std::cout &lt;&lt; *it1 &lt;&lt; std::endl;
+		it1++;
+	}
+	<div class ="toggleCommentDisplay">/// removing the dependencies for the file with file name newList</div>
+	std::cout &lt;&lt; d1.removeDependencyForFileName("newList") &lt;&lt; std::endl;
+	std::string val = "newList";
+	<div class ="toggleCommentDisplay">/// checking the use of operator[] designed for the dependency table </div>
+	std::vector&lt;std::string&gt; f3 = d1[val];
+	<div class ="toggleCommentDisplay">/// displaying the dependencies for the file </div>
+	auto it2 = f3.begin();
+	while (it2 != f3.end()) {
+		std::cout &lt;&lt; *it2 &lt;&lt; std::endl;
+		it2++;
+	}
+	std::cin.get();
+	std::cin.get();
+	return 0;
+}</span>
+#endif <div class ="toggleCommentDisplay">/// DEPENDENCY_TABLE_TEST</div>
+
+
+
+</pre>
+</body>
+</html>
+

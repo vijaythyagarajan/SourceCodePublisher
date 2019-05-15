@@ -1,0 +1,331 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="DirExplorerN.h.html">DirExplorerN.h</a>
+		<a href="CodeUtilities.h.html">CodeUtilities.h</a>
+		<a href="ConverterPackage.h.html">ConverterPackage.h</a>
+		<a href="Display.h.html">Display.h</a>
+		<a href="Display.cpp.html">Display.cpp</a>
+		<a href="Executive.h.html">Executive.h</a>
+		<a href="AbstractExecutive.h.html">AbstractExecutive.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</span></div>
+<div class ="toggleCommentDisplay">/// Executive - Executive Package   (Source Code Publisher)         //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019 //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+#include&lt;iostream&gt;
+#include"DirExplorer-Naive/DirExplorerN.h"
+#include"../DirectoryNavigator/Utilities/StringUtilities/StringUtilities.h"
+#include"../DirectoryNavigator/Utilities/CodeUtilities/CodeUtilities.h"
+#include"../ConverterPackage/ConverterPackage.h"
+#include"../Display/Display.h"
+#include"../Display/Display.cpp"
+#include "Executive.h"
+#include"AbstractExecutive.h"
+
+
+using namespace FileSystem;
+using namespace Utilities;
+
+using filesList = std::vector&lt;std::string&gt;;
+
+ <span class='toggleMethodDisplay'>ProcessCmdLine::Usage customUsage() {
+	std::string usage;
+	usage += "\n  Command Line: path [/option]* [/pattern]*";
+	usage += "\n    path is relative or absolute path where processing begins";
+	usage += "\n    [/option]* are one or more options of the form:";
+	usage += "\n      /s - walk directory recursively";
+	usage += "\n    [pattern]* are one or more pattern strings of the form:";
+	usage += "\n      *.h *.cpp *.cs *.txt or *.*";
+	usage += "\n";
+	return usage;
+}</span>
+
+
+void Executive::setCommandLineArgumentParameter(std::string path, std::string option, std::string pattern,std::string regex)
+ <span class='toggleMethodDisplay'>{
+	std::istringstream issPattern(pattern);
+	std::vector&lt;std::string&gt; patternResult((std::istream_iterator&lt;std::string&gt;(issPattern)),
+		std::istream_iterator&lt;std::string&gt;());
+	std::istringstream issResult(regex);
+	std::vector&lt;std::string&gt; regexResult((std::istream_iterator&lt;std::string&gt;(issResult)),
+		std::istream_iterator&lt;std::string&gt;());
+	std::istringstream issOption(option);
+	std::vector&lt;std::string&gt; optionResult((std::istream_iterator&lt;std::string&gt;(issOption)),
+		std::istream_iterator&lt;std::string&gt;());
+
+	char *pth = (const_cast&lt;char*&gt;(path.c_str()));
+	char *opt = (const_cast&lt;char*&gt;(option.c_str()));
+
+	std::cout &lt;&lt; pth &lt;&lt; std::endl;
+	std::cout &lt;&lt; opt &lt;&lt; std::endl;
+
+	v1.push_back(nullptr);
+
+	v1.push_back(pth);
+	
+	for (size_t i = 0; i &lt; optionResult.size(); i++) {
+		v1.push_back((const_cast&lt;char*&gt;(optionResult[i].c_str())));
+	}
+
+	for (size_t i = 0; i &lt; patternResult.size(); i++) {
+		v1.push_back((const_cast&lt;char*&gt;(patternResult[i].c_str())));
+	}
+
+	for (size_t i = 0; i &lt; regexResult.size(); i++) {
+		v1.push_back((const_cast&lt;char*&gt;(regexResult[i].c_str())));
+	}
+	
+	argv_ = &v1[0];
+	argc_ = v1.size();
+	
+	 char ** p = new char*[argc_];
+	p = &v1[0];
+
+	argv_ = p;
+	argc_ = v1.size();
+
+	
+	convertFiles();
+
+}</span>
+
+void Executive::convertFiles()
+ <span class='toggleMethodDisplay'>{
+	argv_ = &v1[0];
+
+	ProcessCmdLine processCmdLineObj_(argc_, &v1[0]);
+	bool isCommandLineValid = checkCommandLinePath(argc_, &v1[0]);
+	filesList files;
+	if (isCommandLineValid) {
+		argv_ = &v1[0];
+		std::cout &lt;&lt; " \n Demonstrating Requirement 3b: The CommandLine arugment is validated \n";
+		files = searchForFiles(argc_,argv_);
+
+		std::vector&lt;std::string&gt; filesToProcess;
+
+		for (auto regex_str : processCmdLineObj_.regexes()) {
+			std::regex r(regex_str);
+			updateRegexBeingUsed(regex_str);
+			preface(" \n Demonstrating Requirement 3c: Regex used for the filtering files in the directory:");
+			std::cout &lt;&lt; regex_str &lt;&lt; v1[1] &lt;&lt; std::endl;
+			for (auto file : files) {
+				std::string fileName = FileSystem::Path::getName(file);
+
+				if (std::regex_match(fileName, r)) {
+					std::cout &lt;&lt; "matching ......" &lt;&lt;std::endl;
+					filesToProcess.push_back(file);
+				}
+			}
+			preface("no call");
+		}
+		if (filesToProcess.empty()) {
+			std::cout &lt;&lt; "Demonstrating Requirement 3d: ";
+			std::cout &lt;&lt; " No Matches found \n";
+			return ;
+		}
+		preface (" Demonstrating Requirement 4:Executive Package (loader Package) , CovertedPackage , Dependency Analyser and DisplayPackage are used to Display the converted Files on the browser \n");
+		std::cout &lt;&lt; " --- The instance of the Executive() class from the Executive Package is created ---\n";
+		std::cout &lt;&lt; std::endl;
+
+		std::cout &lt;&lt; " \n Demonstrating Requirement 5: The following files are filtered using the given Regex and they are considered for displaying on the browser \n" &lt;&lt; std::endl;
+		printFiles(filesToProcess);
+
+		convertedFilesList_ = convertFiles(filesToProcess);
+		<div class ="toggleCommentDisplay">//*displayFiles(convertedFilesList_);*/</div>
+	}
+}</span>
+
+std::vector&lt;std::string&gt; Executive::convertedFilesList()
+ <span class='toggleMethodDisplay'>{
+	return convertedFilesList_;
+}</span>
+
+<div class ="toggleCommentDisplay">///int main(int argc, char *argv[]) {</div>
+<div class ="toggleCommentDisplay">///	std::cout &lt;&lt; " \n Demonstrating Requirement 3: Executive package accpeting the commandline argument \n";</div>
+<div class ="toggleCommentDisplay">///	Executive exeObj_;</div>
+<div class ="toggleCommentDisplay">///	ProcessCmdLine processCmdLineObj_(argc, argv);</div>
+<div class ="toggleCommentDisplay">///	bool isCommandLineValid = exeObj_.checkCommandLinePath(argc, argv);</div>
+<div class ="toggleCommentDisplay">///	filesList files;</div>
+<div class ="toggleCommentDisplay">///</div>
+<div class ="toggleCommentDisplay">///	if (isCommandLineValid) {</div>
+<div class ="toggleCommentDisplay">///		std::cout &lt;&lt; " \n Demonstrating Requirement 3b: The CommandLine arugment is validated \n";</div>
+<div class ="toggleCommentDisplay">///		files = exeObj_.searchForFiles(argc, argv);</div>
+<div class ="toggleCommentDisplay">///</div>
+<div class ="toggleCommentDisplay">///		std::vector&lt;std::string&gt; filesToProcess;</div>
+<div class ="toggleCommentDisplay">///</div>
+<div class ="toggleCommentDisplay">///		for (auto regex_str : processCmdLineObj_.regexes()) {</div>
+<div class ="toggleCommentDisplay">///			std::regex r(regex_str);</div>
+<div class ="toggleCommentDisplay">///			exeObj_.updateRegexBeingUsed(regex_str);</div>
+<div class ="toggleCommentDisplay">///			preface(" \n Demonstrating Requirement 3c: Regex used for the filtering files in the directory:");</div>
+<div class ="toggleCommentDisplay">///			std::cout &lt;&lt; regex_str &lt;&lt; std::endl;</div>
+<div class ="toggleCommentDisplay">///			for (auto file : files) {</div>
+<div class ="toggleCommentDisplay">///				std::string fileName = FileSystem::Path::getName(file);</div>
+<div class ="toggleCommentDisplay">///</div>
+<div class ="toggleCommentDisplay">///				if (std::regex_match(fileName, r)) {</div>
+<div class ="toggleCommentDisplay">///					filesToProcess.push_back(file);</div>
+<div class ="toggleCommentDisplay">///				}</div>
+<div class ="toggleCommentDisplay">///			}</div>
+<div class ="toggleCommentDisplay">///		}</div>
+<div class ="toggleCommentDisplay">///		if (filesToProcess.empty()) {</div>
+<div class ="toggleCommentDisplay">///			std::cout &lt;&lt; "Demonstrating Requirement 3d: ";</div>
+<div class ="toggleCommentDisplay">///			std::cout &lt;&lt; " No Matches found \n";</div>
+<div class ="toggleCommentDisplay">///			return 1;</div>
+<div class ="toggleCommentDisplay">///		}</div>
+<div class ="toggleCommentDisplay">///		std::cout &lt;&lt; " Demonstrating Requirement 4:Executive Package (loader Package) , CovertedPackage , Dependency Analyser and DisplayPackage are used to Display the converted Files on the browser \n";</div>
+<div class ="toggleCommentDisplay">///		std::cout &lt;&lt; " --- The instance of the Executive() class from the Executive Package is created ---\n";</div>
+<div class ="toggleCommentDisplay">///		std::cout &lt;&lt; std::endl;</div>
+<div class ="toggleCommentDisplay">///</div>
+<div class ="toggleCommentDisplay">///		std::cout &lt;&lt; " \n Demonstrating Requirement 5: The following files are filtered using the given Regex and they are considered for displaying on the browser \n" &lt;&lt; std::endl;</div>
+<div class ="toggleCommentDisplay">///		exeObj_.printFiles(filesToProcess);</div>
+<div class ="toggleCommentDisplay">///</div>
+<div class ="toggleCommentDisplay">///		auto convertedFilesList = exeObj_.convertFiles(filesToProcess);</div>
+<div class ="toggleCommentDisplay">///		exeObj_.displayFiles(convertedFilesList);</div>
+<div class ="toggleCommentDisplay">///</div>
+<div class ="toggleCommentDisplay">///	}</div>
+<div class ="toggleCommentDisplay">///	std::cout &lt;&lt; "To Exit the demostration of the Project press any key and then press Enter  \n";</div>
+<div class ="toggleCommentDisplay">///	std::cin.get();</div>
+<div class ="toggleCommentDisplay">///	return 0;</div>
+<div class ="toggleCommentDisplay">///}</div>
+
+<div class ="toggleCommentDisplay">/// &lt;------ Method to check for the commandline  error  ----&gt;</div>
+ <span class='toggleMethodDisplay'>bool Executive::checkCommandLinePath(int argc, char** argv) {
+	std::cout &lt;&lt; " Demonstrating Requirement 3a: The following is the CommandLine argument ";
+	ProcessCmdLine processCmdLineObj_(argc, argv);
+	processCmdLineObj_.usage(customUsage());
+	preface(" Command Line: ");
+	processCmdLineObj_.showCmdLine();
+	putline();
+	if (processCmdLineObj_.parseError())
+	{
+		processCmdLineObj_.usage();
+		return false;
+	}
+	return true;
+}</span>
+
+<div class ="toggleCommentDisplay">/// &lt;------ Method to search for files in the directory using DirExplorerN ----&gt;</div>
+ <span class='toggleMethodDisplay'>filesList Executive::searchForFiles(int argc, char** &argv) {
+	ProcessCmdLine processCmdLineObj_(argc, argv);
+	processCmdLineObj_.usage(customUsage());
+	DirExplorerN de(processCmdLineObj_.path());
+	for (auto patt : processCmdLineObj_.patterns()) {
+		de.addPattern(patt);
+	}
+	if (processCmdLineObj_.hasOption('s')) {
+		de.recurse();
+	}
+	de.search();
+
+	return de.filesToProcess();
+}</span>
+
+ <span class='toggleMethodDisplay'>void Executive::printFiles(const filesList & files) {
+	if (files.size() &gt; 0) {
+		for (auto file : files) {
+			std::cout &lt;&lt; file &lt;&lt; std::endl;
+		}
+	}
+}</span>
+
+std::string Executive::getRegexString()
+ <span class='toggleMethodDisplay'>{
+	return regexString_;
+}</span>
+
+void Executive::updateRegexBeingUsed(std::string regex)
+ <span class='toggleMethodDisplay'>{
+	regexString_ = regex;
+}</span>
+
+<div class ="toggleCommentDisplay">/// &lt;------ Method to initiate the  conversion of selected Files ----&gt;</div>
+
+ <span class='toggleMethodDisplay'>filesList Executive::convertFiles(filesList & files) {
+	std::cout &lt;&lt; " \n --- Instance of ConvertFile() class of ConvertPackage  is created --- \n";
+	ConvertFile convertObj_;
+	convertObj_.updateRegex(regexString_);
+	return convertObj_.createPublisherCode(files);
+}</span>
+<div class ="toggleCommentDisplay">/// &lt;------ Method to initiate the display of converted files ----&gt;</div>
+
+ <span class='toggleMethodDisplay'>void Executive::displayFiles(filesList & files) {
+	std::cout &lt;&lt; " \n --- Instance of DisplayFile() class of DisplayPackage  is created --- \n";
+	DisplayFile displayObj_;
+	displayObj_.createDisplayFileList(files);
+	displayObj_.displayFileWithPath();
+
+}</span>
+
+ <span class='toggleMethodDisplay'> AbstractPublisher *ObjectFactory ::createClient() {
+	return new  Executive;
+}
+
+</pre>
+</body>
+</html>
+

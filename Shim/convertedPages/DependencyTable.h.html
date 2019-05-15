@@ -1,0 +1,139 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="DependencyTable.h.html">DependencyTable.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">/////////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Dependency table  - DependencyAnalyser Package (Source Code Publisher) //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019        //</div>
+<div class ="toggleCommentDisplay">/////////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+ * Package Operations:
+ * -------------------
+ * The dependency table is a unorderMap datastructure with key being a file name as 
+ * string and the value is a vector of string holding the corresponding dependencies
+ * for the file.
+ * Used by the dependency analyser package to hold the denpendencies for further use.
+ * Provides public interface methods to add file and its dependencies,
+ * remove a file and its entries in the table,
+ * clear the entire dependency table ie.. earse option
+ * check if the file has an entry in the table
+ * -------------------
+ * Required Files:
+ * ---------------
+ * unordered_map 
+ * ---------------
+ Maintenance History:
+  ===================
+  ver 1.0 : 12 Feb 2019
+  - first release
+  -  Dependency table provides a mechanism to store the file name 
+  -  and the lsit of the files in which it depends on.
+ */</div>
+#include"DependencyTable.h"
+#include&lt;unordered_map&gt;
+
+
+using filesList = std::vector&lt;std::string&gt;;
+
+ <span class='toggleClassDisplay'> class DependencyTable {
+
+public:
+	using dependencyTable = std::unordered_map&lt; std::string, filesList&gt;;
+	DependencyTable()
+ <span class='toggleMethodDisplay'>	{
+
+	}</span>
+	~DependencyTable()
+ <span class='toggleMethodDisplay'>	{
+
+	}</span>
+	bool addDependencyToFileName(std::string fileName, const std::string &files);
+	bool removeDependencyForFileName(std::string const &fileName);
+	const filesList getAllDependenciesForFileName(std::string const &fileName);
+
+	const filesList & operator[](const std::string &fileName);
+	void clearTable();
+	dependencyTable getTable();
+	void DisplayDependenciesForFileName(std::string const &fileName);
+
+	bool hasDependency(std::string const & fileName);
+
+private:
+	dependencyTable table_;
+	bool hasEntry(std::string const &fileName);
+
+};</span>
+
+
+
+</pre>
+</body>
+</html>
+

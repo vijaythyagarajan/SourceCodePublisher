@@ -1,0 +1,138 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="ActionsAndRules.h.html">ActionsAndRules.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">///  ActionsAndRules.cpp - implements new parsing rules and actions //</div>
+<div class ="toggleCommentDisplay">///  ver 3.4                                                        //</div>
+<div class ="toggleCommentDisplay">///  Language:      Visual C++ 2008, SP1                            //</div>
+<div class ="toggleCommentDisplay">///  Platform:      Dell Precision T7400, Vista Ultimate SP1        //</div>
+<div class ="toggleCommentDisplay">///  Application:   Prototype for CSE687 Pr1, Sp09                  //</div>
+<div class ="toggleCommentDisplay">///  Author:        Jim Fawcett, CST 4-187, Syracuse University     //</div>
+<div class ="toggleCommentDisplay">///                 (315) 443-3948, jfawcett@twcny.rr.com           //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+
+#include "ActionsAndRules.h"
+#include "../Utilities/Utilities.h"
+
+using namespace CodeAnalysis;
+
+Repository* Repository::instance;
+
+#ifdef TEST_ACTIONSANDRULES
+
+#include &lt;iostream&gt;
+#include "ActionsAndRules.h"
+#include "Tokenizer.h"
+#include "Semiression.h"
+
+int main(int argc, char* argv[])
+ <span class='toggleMethodDisplay'>{
+  std::cout &lt;&lt; "\n  Testing ActionsAndRules class\n "
+            &lt;&lt; std::string(30,'=') &lt;&lt; std::endl;
+
+  try
+  {
+    Utilities::StringHelpers::Title(
+      "Actions and Rules - these construction tests are no longer valid"
+    );
+    <div class ="toggleCommentDisplay">///PreprocStatement pps;</div>
+    <div class ="toggleCommentDisplay">///pps.addAction(&ppq);</div>
+
+    <div class ="toggleCommentDisplay">///FunctionDefinition fnd;</div>
+    <div class ="toggleCommentDisplay">///PrettyPrintToQ pprtQ(resultsQ);</div>
+    <div class ="toggleCommentDisplay">///fnd.addAction(&pprtQ);</div>
+
+    <div class ="toggleCommentDisplay">///Toker toker("../ActionsAndRules.h");</div>
+    <div class ="toggleCommentDisplay">///Semi se(&toker);</div>
+    <div class ="toggleCommentDisplay">///Parser parser(&se);</div>
+    <div class ="toggleCommentDisplay">///parser.addRule(&pps);</div>
+    <div class ="toggleCommentDisplay">///parser.addRule(&fnd);</div>
+    <div class ="toggleCommentDisplay">///while(se.get())</div>
+    <div class ="toggleCommentDisplay">///  parser.parse();</div>
+    <div class ="toggleCommentDisplay">///size_t len = resultsQ.size();</div>
+    <div class ="toggleCommentDisplay">///for(size_t i=0; i&lt;len; ++i)</div>
+    <div class ="toggleCommentDisplay">///{</div>
+    <div class ="toggleCommentDisplay">///  std::cout &lt;&lt; "\n  " &lt;&lt; resultsQ.front().c_str();</div>
+    <div class ="toggleCommentDisplay">///  resultsQ.pop();</div>
+    <div class ="toggleCommentDisplay">///}</div>
+    std::cout &lt;&lt; "\n\n";
+  }
+  catch(std::exception& ex)
+  {
+    std::cout &lt;&lt; "\n\n  " &lt;&lt; ex.what() &lt;&lt; "\n\n";
+  }
+}</span>
+#endif
+
+
+</pre>
+</body>
+</html>
+

@@ -1,0 +1,145 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="Display.h.html">Display.h</a>
+		<a href="AbstractExecutive.h.html">AbstractExecutive.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Executive - Executive Package   (Source Code Publisher)         //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019 //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+ * Package Operations:
+ * -------------------
+ * The Executive Package file includes Executive class that takes in the commandLine
+ * argument and checks for the validity of the commandPath specified and searches for the files
+ * in the given directory considering the filters provided in the commandLine by the user.
+ * Once a list of files are generated they are converted into .html and then displayed on the
+ * default browser.
+ * -------------------
+ * Required Files:
+ * ---------------
+ * DirExplorerN.h,FileSystem.h
+ * StringUtilities.h,CodeUtilities.h
+ * Process.h , Process.cpp
+ * Display.h ,Display.cpp
+ * Converter.h ,Converter.cpp
+ * ---------------
+ */</div>
+#include "../Display/Display.h"
+#include"AbstractExecutive.h"
+
+ <span class='toggleClassDisplay'> class Executive :public AbstractPublisher {
+public:
+	using filesList = std::vector&lt;std::string&gt;;
+
+	<div class ="toggleCommentDisplay">/// Method to initiate the  conversion of selected Files</div>
+	filesList convertFiles(filesList &files);
+
+	<div class ="toggleCommentDisplay">///Method to initiate the display of converted files</div>
+	void displayFiles(filesList &files);
+
+	<div class ="toggleCommentDisplay">/// Method to check for the commandline  error</div>
+	bool checkCommandLinePath(int argc, char** argv);
+
+	<div class ="toggleCommentDisplay">///Method to search for files in the directory using DirExplorerN</div>
+	filesList searchForFiles(int argc, char** &argv);
+
+	<div class ="toggleCommentDisplay">///Method to print the list of files on console</div>
+	void printFiles(const filesList &files);
+
+    <div class ="toggleCommentDisplay">/// Method to get the regular expression used for filtering </div>
+	std::string getRegexString();
+
+	<div class ="toggleCommentDisplay">/// update the regex from commandline</div>
+
+	void updateRegexBeingUsed(std::string regex);
+
+
+	void  setCommandLineArgumentParameter(std::string path, std::string option, std::string pattern, std::string regex) override;
+	void convertFiles() override;
+	std::vector&lt;std::string&gt;  convertedFilesList() override;
+
+private:
+	std::vector&lt;std::string&gt; convertedFilesList_;
+	std::string regexString_;
+	std::vector&lt;char*&gt; v1;
+
+	int argc_;
+	char **argv_;
+	
+
+};</span>
+
+
+
+</pre>
+</body>
+</html>
+

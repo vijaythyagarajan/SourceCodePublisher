@@ -1,0 +1,216 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="DirExplorerE.h.html">DirExplorerE.h</a>
+		<a href="CodeUtilities.h.html">CodeUtilities.h</a>
+		<a href="Environment.h.html">Environment.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// DirExplorerE.cpp - directory explorer using events              //</div>
+<div class ="toggleCommentDisplay">/// ver 1.0                                                         //</div>
+<div class ="toggleCommentDisplay">/// Jim Fawcett, CSE687 - Object Oriented Design, Fall 2018         //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+*  Note:
+*  This file simulates application code that uses DirExplorerE.
+*/</div>
+
+#ifdef TEST_DIREXPLORERE  <div class ="toggleCommentDisplay">/// only compile the following when defined</div>
+
+#include "DirExplorerE.h"
+#include "../StringUtilities/StringUtilities.h"
+#include "../CodeUtilities/CodeUtilities.h"
+#include "../UtilitiesEnvironment/Environment.h"
+
+using namespace Utilities;
+using namespace FileSystem;
+
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// dirEventHandler class defines dir processing without modifying</div>
+<div class ="toggleCommentDisplay">/// DirExplorerE code.</div>
+
+class dirEventHandler : public IDirEvent
+ <span class='toggleClassDisplay'> {
+public:
+  void execute(const std::string& dirname)
+ <span class='toggleMethodDisplay'>  {
+    std::cout &lt;&lt; "\n  dir---&gt;  " &lt;&lt; dirname;
+  }</span>
+};</span>
+
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// fileEventHandler class defines file processing without modifying</div>
+<div class ="toggleCommentDisplay">/// DirExplorerE code.</div>
+
+class fileEventHandler : public IFileEvent
+ <span class='toggleClassDisplay'> {
+public:
+  void execute(const std::string& filename)
+ <span class='toggleMethodDisplay'>  {
+    std::cout &lt;&lt; "\n  file--&gt;    " &lt;&lt; filename;
+  }</span>
+};</span>
+
+class AppDirExplorerE : public DirExplorerE
+ <span class='toggleClassDisplay'> {
+public:
+ <span class='toggleMethodDisplay'>  AppDirExplorerE(const std::string& path) : DirExplorerE(path) {}</span>
+
+  virtual bool done(bool reset = false)
+ <span class='toggleMethodDisplay'>  {
+    static bool first = true;
+  
+    if (first || reset)
+    {
+      std::cout &lt;&lt; "\n  Application modified done() invoked";
+      first = false;
+    }
+    return DirExplorerE::done();
+  }</span>
+};</span>
+
+std::string customUsage()
+ <span class='toggleMethodDisplay'>{
+  std::string usage;
+  usage += "\n  Command Line: path [/option]* [/pattern]*";
+  usage += "\n    path is relative or absolute path where processing begins";
+  usage += "\n    [/option]* are one or more options of the form:";
+  usage += "\n      /s - walk directory recursively";
+  usage += "\n      /h - hide empty directories";
+  usage += "\n      /a - on stopping, show all files in current directory";
+  usage += "\n    [pattern]* are one or more pattern strings of the form:";
+  usage += "\n      *.h *.cpp *.cs *.txt or *.*";
+  usage += "\n";
+  return usage;
+}</span>
+
+int main(int argc, char *argv[])
+ <span class='toggleMethodDisplay'>{
+  Title("Demonstrate DirExplorer-Events, " + DirExplorerE::version());
+
+  ProcessCmdLine pcl(argc, argv);
+  customUsage();
+
+  preface("Command Line: ");
+  pcl.showCmdLine();
+  putline();
+
+  if (pcl.parseError())
+  {
+    pcl.usage();
+    std::cout &lt;&lt; "\n\n";
+    return 1;
+  }
+
+  AppDirExplorerE de(pcl.path());
+
+  <div class ="toggleCommentDisplay">///----&lt; subscribe for dir and file events &gt;------------------------</div>
+
+  de.dirSubScribe(new dirEventHandler);
+  de.fileSubScribe(new fileEventHandler);
+
+  for (auto patt : pcl.patterns())
+  {
+    de.addPattern(patt);
+  }
+
+  if (pcl.hasOption('s'))
+  {
+    de.recurse();
+  }
+
+  if (pcl.hasOption('a'))
+  {
+    de.showAllInCurrDir(true);
+  }
+
+  if (pcl.hasOption('h'))
+  {
+    de.hideEmptyDirectories(true);
+  }
+
+  if (pcl.maxItems() &gt; 0)
+  {
+    de.maxItems(pcl.maxItems());
+  }
+
+  <div class ="toggleCommentDisplay">///----&lt; start file system processing &gt;-----------------------------</div>
+
+  de.search();
+  de.showStats();
+
+  std::cout &lt;&lt; "\n\n";
+  return 0;
+}</span>
+
+#endif
+
+</pre>
+</body>
+</html>
+

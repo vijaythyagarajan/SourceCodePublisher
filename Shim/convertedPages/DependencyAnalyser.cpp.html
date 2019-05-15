@@ -1,0 +1,261 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="FileSystem.h.html">FileSystem.h</a>
+		<a href="AbstrSynTree.h.html">AbstrSynTree.h</a>
+		<a href="DependencyAnalyser.h.html">DependencyAnalyser.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+<div class ="toggleCommentDisplay">/////////////////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Dependency Analysis - DependencyAnalyser Package   (Source Code Publisher)     //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019				  //</div>
+<div class ="toggleCommentDisplay">/////////////////////////////////////////////////////////////////////////////////////</div>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include&lt;queue&gt;
+#include "../DirectoryNavigator/FileSystem/FileSystem.h"
+#include"../CppParser/AbstractSyntaxTree/AbstrSynTree.h"
+#include&lt;string&gt;
+#include "DependencyAnalyser.h"
+
+using namespace CodeAnalysis;
+<div class ="toggleCommentDisplay">///&lt;------- get the list of files for performing dependency analysis</div>
+void DependencyAnalyser::considerFilesForDependencyAnalysis(const filesList & files) 
+ <span class='toggleMethodDisplay'>{
+	filesList_ = files;
+}</span>
+<div class ="toggleCommentDisplay">/// &lt; ------- updating the dependency table with the extracted dependencies for the given file name ------&gt;</div>
+std::unordered_map&lt; std::string, filesList&gt; DependencyAnalyser::updateDependencyTable()
+ <span class='toggleMethodDisplay'>{
+	std::unordered_map&lt; std::string, filesList&gt; dependencyFiles;
+	std::vector&lt;std::string&gt; files = getFilesForAnalaysis();
+	std::string fileSpec;
+	DependencyTable dpTableObj_;
+	for (auto file : files) {
+		getAllDependencies(file);
+		std::vector&lt;std::string&gt; files = extractTrueDependencies();
+		
+		for (auto file_ : files) {
+			dpTableObj_.addDependencyToFileName(fileName_, file_);
+		}
+		allDependenciesList_.clear();
+		trueDependenciesList_.clear();
+		filesList_.clear();
+	}
+	dependencyFiles = dpTableObj_.getTable();
+	return dependencyFiles;
+}</span>
+<div class ="toggleCommentDisplay">///&lt;---------- to get the list of files for analysis -------&gt;</div>
+ filesList DependencyAnalyser::getFilesForAnalaysis() 
+ <span class='toggleMethodDisplay'> {
+	return filesList_;
+ }</span>
+ <div class ="toggleCommentDisplay">///&lt;---------------- return the stack of parser result for the file name -------&gt;</div>
+ std::stack&lt;Node*&gt; DependencyAnalyser::getParsedResult()
+ <span class='toggleMethodDisplay'> {
+	 return stack_;
+ }</span>
+<div class ="toggleCommentDisplay">///&lt;--------- extract the dependencies without the library dependencies ---------&gt;</div>
+ filesList DependencyAnalyser::extractTrueDependencies()
+ <span class='toggleMethodDisplay'> {
+	 std::string hastag = "#"; std::string includeKeyWord = "include";
+	 for (auto file : allDependenciesList_) {
+		 if (file.find(hastag) != std::string::npos && file.find(includeKeyWord) != std::string::npos ) {
+			 auto filterIterator =  file.find('"');
+			 if(filterIterator != std::string::npos) {
+				 std::string fileName = file.substr(filterIterator, filterIterator + file.size() - 2);
+					 if (std::find(trueDependenciesList_.begin(), trueDependenciesList_.end(), fileName) == trueDependenciesList_.end()) {
+						 trueDependenciesList_.push_back(fileName);
+					 }
+			 }
+			 
+		 }
+	 }
+	 return trueDependenciesList_;
+ }</span>
+ <div class ="toggleCommentDisplay">///&lt;--------------- to extract the file's full extension -----------------&gt; </div>
+ <span class='toggleMethodDisplay'> std::string DependencyAnalyser::getFileExtensionForFile(std::string fileName) {
+	 std::string fileExtension ;
+	 std::string copyFileName_ = FileSystem::Path::getFullFileSpec(fileName);
+	 size_t found = copyFileName_.find_last_of("\\");
+	 if(found != std::string::npos)
+		 fileExtension = copyFileName_.substr(0, found);
+
+	 return fileExtension;
+ }</span>
+ <div class ="toggleCommentDisplay">///&lt;----------------- to extract all the file dependencies -------------------&gt;</div>
+ int DependencyAnalyser::getAllDependencies( std::string file)
+ <span class='toggleMethodDisplay'> {
+	     std::string fileSpec;
+		 fileSpec = FileSystem::Path::getFullFileSpec(file);
+		 std::string msg = "Processing file" + fileSpec;
+		 ConfigParseForCodeAnal configure;
+		 Parser* pParser = configure.Build();
+		 std::string name;
+		 try
+		 {
+			 if (pParser)
+			 {
+				 name = FileSystem::Path::getName(file);
+				 fileName_ = name;
+				 if (!configure.Attach(fileSpec))
+				 {
+					 std::cout &lt;&lt; "\n  could not open file " &lt;&lt; name &lt;&lt; std::endl;
+					 return 1;
+				 }
+			 }
+			 else
+			 {
+				 return 1;
+			 }
+			 Repository* pRepo = Repository::getInstance();
+			 pRepo-&gt;package() = name;
+			 while (pParser-&gt;next()) {
+				 pParser-&gt;parse();
+			 }
+			 ASTNode* pGlobalScope = pRepo-&gt;getGlobalScope();
+			 auto iter2 = pGlobalScope-&gt;statements_.begin();
+			 while (iter2 != pGlobalScope-&gt;statements_.end()) {
+				 allDependenciesList_.push_back((*iter2)-&gt;ToString());
+				 iter2++;
+			 }
+			 complexityEval(pGlobalScope);
+			 treeWalk(pGlobalScope);
+		 }
+		 catch (std::exception& ex)
+		 {
+			 std::cout &lt;&lt; "\n\n    " &lt;&lt; ex.what() &lt;&lt; "\n  exception caught at line " &lt;&lt; __LINE__ &lt;&lt; "\n  in package \"" &lt;&lt; name &lt;&lt; "\"";
+		 }
+	 return 0;
+ }</span>
+<div class ="toggleCommentDisplay">///&lt;------------- perform tree walk to get the parser result and store in the stack_ ----------&gt;</div>
+ void DependencyAnalyser::treeWalk(ASTNode * item) 
+ <span class='toggleMethodDisplay'> {
+	 static std::string path;
+	 static size_t indentLevel = 0;
+	 std::ostringstream out;
+	 auto iter = item-&gt;children_.begin();
+	 ++indentLevel;
+	 Node *newNode = new Node();
+	 newNode-&gt;name = item-&gt;name_;
+	 newNode-&gt;type = item-&gt;type_;
+	 newNode-&gt;startLineCount = item-&gt;startLineCount_;
+	 newNode-&gt;endLineCount = item-&gt;endLineCount_;
+	 stack_.push(newNode);
+	 while (iter != item-&gt;children_.end())
+	 { 
+		 treeWalk(*iter);
+		 ++iter;
+	 }
+	 --indentLevel;
+ }</span>
+
+ <div class ="toggleCommentDisplay">///&lt;------ test strub for dependency analyer --------------&gt;</div>
+#ifdef DEPENDENCY_ANALYSIS_TEST
+
+ <span class='toggleMethodDisplay'> int main(int argc, char* argv[]) {
+
+	 DependencyAnalyser d1;
+	 Util::Title("Testing Parser Class");
+	 putline();
+
+	 std::vector&lt;std::string &gt; files;
+	 <div class ="toggleCommentDisplay">/// Analyzing files, named on the command line</div>
+
+	 if (argc &lt; 2)
+	 {
+		 std::cout
+			 &lt;&lt; "\n  please enter name of file to process on command line\n\n";
+		 return 1;
+	 }
+
+	 std::string fileSpec;
+
+	 for (int i = 1; i &lt; argc; ++i)  <div class ="toggleCommentDisplay">/// iterate over files</div>
+	 {
+		 fileSpec = FileSystem::Path::getFullFileSpec(argv[i]);
+		 std::string msg = "Processing file" + fileSpec;
+		 Util::title(msg);
+
+		 files.push_back(argv[i]);
+	 }
+
+	 d1.considerFilesForDependencyAnalysis(files);
+	 d1.updateDependencyTable();
+	 std::cin.get();
+
+}</span>
+
+#endif <div class ="toggleCommentDisplay">/// DEPENDENCY_ANALYSIS_TEST</div>
+
+ 
+
+
+</pre>
+</body>
+</html>
+

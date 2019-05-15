@@ -1,0 +1,107 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Environment.h - Provides aliases used in several of the utilities //</div>
+<div class ="toggleCommentDisplay">/// ver 1.0                                                           //</div>
+<div class ="toggleCommentDisplay">/// Jim Fawcett, CSE687 - Object Oriented Design, Fall 2018           //</div>
+<div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+*  Package Purpose:
+*  ----------------
+*  Provide one place for common defintions.
+*
+*  Required Files:
+*  ---------------
+*  Environment.h
+*
+*  Maintenance History:
+*  --------------------
+*  ver 1.0 : 11 Oct 2018
+*  - first release
+*/</div>
+
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+namespace Utilities
+{
+  using MessageStr = std::string;
+  using PathStr = std::string;
+  using File = std::string;
+  using Files = std::vector&lt;File&gt;;
+  using Pattern = std::string;
+  using Patterns = std::vector&lt;Pattern&gt;;
+  using Dir = std::string;
+  using Dirs = std::vector&lt;Dir&gt;;
+}
+
+</pre>
+</body>
+</html>
+

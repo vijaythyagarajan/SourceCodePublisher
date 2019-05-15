@@ -1,0 +1,98 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+
+#ifdef IN_DLL
+#define DLL_DECL __declspec(dllexport)
+#else
+#define DLL_DECL __declspec(dllimport)
+#endif
+#include&lt;iostream&gt;
+#include&lt;string&gt;
+#include&lt;vector&gt;
+
+ <span class='toggleClassDisplay'> class AbstractPublisher {
+public:
+	virtual void setCommandLineArgumentParameter(std::string path, std::string option,std::string pattern, std::string regex) = 0;
+	virtual void convertFiles() = 0;
+	virtual std::vector&lt;std::string&gt;  convertedFilesList() = 0;
+};</span>
+
+extern "C" {
+	<div class ="toggleCommentDisplay">/// Instantiates publisher* as *executive</div>
+	struct ObjectFactory {
+		<div class ="toggleCommentDisplay">/// See Executive.cpp for implementation</div>
+		 AbstractPublisher* createClient();
+	};
+}
+
+
+</pre>
+</body>
+</html>
+

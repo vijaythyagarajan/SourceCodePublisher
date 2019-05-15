@@ -1,0 +1,133 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Display - DisplayFile Package   (Source Code Publisher)         //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019 //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+ * Package Operations:
+ * -------------------
+ * The Display Package file includes DisplayFile class that stores the
+ * files names that needs to be displayed , the methods setApplicationPath() and
+ * createCommandLineForFileName() are implemented to uses pass required parameters
+ * for the Process package
+ * -------------------
+ * Required Files:
+ * ---------------
+ * Process.h, Process.cpp
+ * ---------------
+ Maintenance History:
+  ===================
+  ver 1.0 : 17 Jan 2019
+  - first release
+  - This Class takes in the files to be displayed and uses the process package to 
+  - display the file on a browser. 
+ */</div>
+
+#include&lt;iostream&gt;
+#include&lt;algorithm&gt;
+#include&lt;regex&gt;
+#include&lt;string&gt;
+
+ <span class='toggleClassDisplay'> class DisplayFile {
+public:
+ <span class='toggleMethodDisplay'>	DisplayFile() {}</span>
+ <span class='toggleMethodDisplay'>	virtual ~DisplayFile() {}</span>
+	using files = std::vector&lt;std::string&gt;;
+
+	<div class ="toggleCommentDisplay">/// Method to create a list of files that needs to be displayed </div>
+	void createDisplayFileList(const DisplayFile::files& fileList);
+
+	<div class ="toggleCommentDisplay">/// Method  that returns the list of files</div>
+	const DisplayFile::files & getFilesToDisplay();
+
+	<div class ="toggleCommentDisplay">///Method to display all the files </div>
+	void displayFileWithPath();
+
+	<div class ="toggleCommentDisplay">/// Method to set the application path </div>
+	void setApplicationPath(const std::string& appPath);
+
+	<div class ="toggleCommentDisplay">/// Method to create command line for each file  to display files on a default browser using cmd.</div>
+	std::string getFilePath();
+	std::string createCommandLineForFileName(const std::string& filePath);
+
+private:
+	<div class ="toggleCommentDisplay">///storage for the list of files to display</div>
+	files filesToDisplay_;
+	<div class ="toggleCommentDisplay">/// parameters used to pass the required fields for the Process Package </div>
+	std::string appPath_;
+	std::string commandLine_;
+	std::string title_;
+};</span>
+
+
+</pre>
+</body>
+</html>
+

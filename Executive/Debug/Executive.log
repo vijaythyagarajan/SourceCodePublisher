@@ -1,0 +1,4 @@
+﻿  Executive.cpp
+c:\users\vijaythyagarajan\desktop\project_4\executive\executive.cpp(194): warning C4273: 'ObjectFactory::createClient': inconsistent dll linkage
+  c:\users\vijaythyagarajan\desktop\project_4\executive\abstractexecutive.h(42): note: see previous definition of 'createClient'
+  Executive.vcxproj -> C:\Users\VijayThyagarajan\Desktop\Project_4\Debug\Executive.lib

@@ -1,0 +1,158 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="DependencyTable.h.html">DependencyTable.h</a>
+		<a href="ConfigureParser.h.html">ConfigureParser.h</a>
+		<a href="AbstrSynTree.h.html">AbstrSynTree.h</a>
+		<a href="ConverterPackage.h.html">ConverterPackage.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Dependency Analyser- DependencyAnalyser Package (Source Code Publisher) //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019         //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+ * Package Operations:
+ * -------------------
+ * Dependency Analyser package along with Parser package is used to find all the dependencies 
+ * for a file. The package can also be used to get all the dependencies, only the dependencies
+ * within the files current directory.
+ * -------------------
+ * Required Files:
+ * ---------------
+ * Parser.h,ConfigureParser.h,AbstrSynTree.h
+ * ConverterPackage.h
+ * ---------------
+ Maintenance History:
+  ===================
+  ver 1.0 : 12 Feb 2019
+  - first release
+  -  Dependency Analyser find the list of dependent file names
+  -	 given a file name
+  */</div>
+#include&lt;iostream&gt;
+#include"DependencyTable.h"
+#include&lt;string&gt;
+#include "../CppParser/Parser/Parser.h"
+#include "../CppParser/Parser/ConfigureParser.h"
+#include"../CppParser/AbstractSyntaxTree/AbstrSynTree.h"
+#include&lt;unordered_map&gt;
+#include"../ConverterPackage/ConverterPackage.h"
+#include&lt;stack&gt;
+
+
+using namespace CodeAnalysis;
+
+class DependencyAnalyser 
+ <span class='toggleClassDisplay'> {
+
+public:
+	using filesList = std::vector&lt;std::string&gt;;
+	~DependencyAnalyser()
+ <span class='toggleMethodDisplay'>	{
+
+	}</span>
+	using dependencyFileList = std::unordered_map&lt; std::string, filesList&gt;;
+
+	using parserResult = std::unordered_map&lt; std::string, std::list&lt;ASTNode&gt;&gt;;
+	 <div class ="toggleCommentDisplay">/// updating the list of files that needs to be analysed</div>
+	void considerFilesForDependencyAnalysis(const filesList &files);
+	<div class ="toggleCommentDisplay">///  to update dependencies for a file </div>
+	dependencyFileList updateDependencyTable();
+	<div class ="toggleCommentDisplay">/// method to get a list of files that needs to be analysed for dependencies</div>
+	filesList getFilesForAnalaysis();
+	<div class ="toggleCommentDisplay">/// method to get all the dependencies for the file name specified</div>
+	int getAllDependencies(std::string file);
+	<div class ="toggleCommentDisplay">/// to get the stack that holds the parser result</div>
+	std::stack&lt;Node*&gt; getParsedResult();
+
+private:
+	filesList filesList_;
+	<div class ="toggleCommentDisplay">/// to hold the file name that is currently processed by the parser</div>
+	std::string  fileName_;
+	<div class ="toggleCommentDisplay">/// a vector to hold all the dependencies for a file </div>
+	filesList allDependenciesList_;
+	<div class ="toggleCommentDisplay">/// a vector to hold only the dependencies exculding the library ones</div>
+	filesList trueDependenciesList_;
+	<div class ="toggleCommentDisplay">/// To get all true dependencies</div>
+	filesList extractTrueDependencies();
+	<div class ="toggleCommentDisplay">/// perform a tree walk </div>
+	void treeWalk(ASTNode *item);
+	<div class ="toggleCommentDisplay">/// a stack to hold the parser result</div>
+	std::stack&lt;Node*&gt; stack_;
+	<div class ="toggleCommentDisplay">/// To get the file extension for the file name</div>
+	std::string getFileExtensionForFile(std::string fileName);
+};</span>
+
+
+
+
+</pre>
+</body>
+</html>
+

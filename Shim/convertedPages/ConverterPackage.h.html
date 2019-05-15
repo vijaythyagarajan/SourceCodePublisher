@@ -1,0 +1,200 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Converter - ConverterFile Package   (Source Code Publisher)     //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019 //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+ * Package Operations:
+ * -------------------
+ * The Converter Package file includes the ConverterFile class which 
+ * takes in the list of files of type *h , *cpp and convert all the special characters
+ * with their respective escape sequence characters and merges the file into an appropriate
+ * template such that the file can be views on a browser.	
+ * Takes a list of files that needs to be converted into a html file.
+ * Converts the Template file and the converted files and merges it and stores its a .html file.
+ * --------------------
+ Maintenance History:
+ ===================
+  ver 1.0 : 17 Jan 2019
+- first release
+- Dependency table provides a mechanism to store the file name
+- and the lsit of the files in which it depends on.
+*/</div>
+
+#include&lt;iostream&gt;
+#include&lt;Windows.h&gt;
+#include&lt;algorithm&gt;
+#include&lt;regex&gt;
+#include&lt;string&gt;
+#include&lt;unordered_map&gt;
+#include&lt;stack&gt;
+
+class Node 
+ <span class='toggleClassDisplay'> {
+public:
+		std:: string type;
+		std:: string name;
+		size_t startLineCount = 0;
+		size_t endLineCount = 0;
+		Node ()
+ <span class='toggleMethodDisplay'>		{
+		}</span>
+		<div class ="toggleCommentDisplay">/// parameterised constructor for the Node class</div>
+		Node (std:: string type, std:: string name, size_t startLineCount,size_t endLineCount)
+ <span class='toggleMethodDisplay'>		{
+			type = type;
+			name = name;
+			startLineCount = startLineCount;
+			endLineCount = endLineCount;
+		}</span>
+		<div class ="toggleCommentDisplay">/// copy constructor for Node class </div>
+		Node (const Node &l) 
+ <span class='toggleMethodDisplay'>		{
+			type = l.type;
+	 		name = l.name;
+			startLineCount = l.startLineCount;
+			endLineCount = l.endLineCount;
+		}</span>
+		<div class ="toggleCommentDisplay">/// initializer list for the node class</div>
+		Node (std:: initializer_list &lt;Node&gt; & list) 
+ <span class='toggleMethodDisplay'>		{
+			auto it1 = list.begin();
+			std:: stack &lt;Node*&gt; s1;
+			while (it1 != list.end()) {
+				Node *newNode = new Node();
+				newNode-&gt;name = it1-&gt;name;
+				newNode-&gt;type = it1-&gt;type;
+				newNode-&gt;startLineCount = it1-&gt;startLineCount;
+				newNode-&gt;endLineCount = it1-&gt;endLineCount;
+				s1.push(newNode);
+			}
+		}</span>
+};</span>
+
+
+class ConvertFile 
+ <span class='toggleClassDisplay'> {
+	public:
+		ConvertFile ()
+ <span class='toggleMethodDisplay'>		{
+		}</span>
+		virtual ~ConvertFile ()
+ <span class='toggleMethodDisplay'>		{
+		}</span>
+		using ConverterFiles = std::vector&lt;std::string&gt;;
+		<div class ="toggleCommentDisplay">/// A get method to get all the files that needs to be converted for displaying on thw browser</div>
+		const ConvertFile::ConverterFiles& getFilesToConvert();
+		<div class ="toggleCommentDisplay">/// method to get the convert the file into *html file</div>
+		std:: vector &lt;std:: string&gt;  createPublisherCode(ConverterFiles &files);
+		<div class ="toggleCommentDisplay">/// method to store the converted file in a perticular directory </div>
+		void storeFilesToConvert(const ConverterFiles& filesList);
+		<div class ="toggleCommentDisplay">/// get the regex used in the command line</div>
+		std::string getRegexUsed();
+		<div class ="toggleCommentDisplay">///  updating the regex to use in the dependency analysis</div>
+		void updateRegex(std::string regex);
+		<div class ="toggleCommentDisplay">///void testDependencies(std::string fileName);</div>
+		std::stack&lt;Node*&gt; value;
+	private:
+		ConverterFiles files;
+		ConverterFiles convertedFiles_;
+		std::string fileName;
+		std::string regex_;
+		using filesList = std:: vector &lt;std::string&gt;;
+		std:: unordered_map&lt; std:: string,filesList&gt; dependencyFileList;
+		<div class ="toggleCommentDisplay">/// A helper method to replace the occurance of a character with another character</div>
+		std:: string replace_escapeCharacter(std:: string const & inputString, std:: string const & oldCharacterSet, std:: string const & newCharacterSet);
+		<div class ="toggleCommentDisplay">/// Create a Template String fron the Template.txt file </div>
+		std:: vector &lt;std:: string&gt;  createTemplateStringFromFile(std::string templateFileName);
+		<div class ="toggleCommentDisplay">/// Convert file to be converted into a bag of strings</div>
+		std::vector&lt;std::string&gt; createPublisherCodeStringFromFile(std::string publisherFileName);
+		<div class ="toggleCommentDisplay">/// check the presence of special characters that needs to replaced with their </div>
+		std::vector &lt;std:: string&gt; checkEscapeCharacterInPublisherCode(std::vector&lt;std::string&gt; publisherCodeString);
+		<div class ="toggleCommentDisplay">/// Method to merge the template string and file to display</div>
+		std::vector &lt;std:: string&gt; mergeTemplateStringWithPublisherCodeString(std::vector&lt;std::string&gt; templateString, std::vector&lt;std::string&gt; publisherCodeString);
+		int dirExists( const char *path);
+		<div class ="toggleCommentDisplay">/// Method to store the converted file </div>
+		std::string storeConvertedCode(std::vector&lt;std::string&gt; mergedCode);
+		<div class ="toggleCommentDisplay">/// add the xml to the publisher code </div>
+		std::vector &lt;std:: string&gt; addXmlActionBlockForPublisherCode(std:: vector &lt;std::string&gt; mergerCode );		
+		<div class ="toggleCommentDisplay">/// handing comments in the publisher code</div>
+		void handingCommentsInSourceCode(std::vector&lt;std::string&gt; & mergerCode);
+		<div class ="toggleCommentDisplay">/// replace the occurance of a string with another string</div>
+		std::string ReplaceStringInPlace(std::string& subject,std::string & search, std::string replace);
+		<div class ="toggleCommentDisplay">/// find the index of the substring in the string</div>
+		int FindSubstringindex( std::string *parentstring,  std::string *substring);
+		void handlingKeyWordsInPublisherCode(std::vector&lt;std::string&gt; & mergerCode, std::vector&lt;std::string&gt; keyWordList);
+};</span>
+
+
+
+</pre>
+</body>
+</html>
+

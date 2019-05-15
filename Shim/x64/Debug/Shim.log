@@ -1,0 +1,6 @@
+﻿  Shim.cpp
+  .NETFramework,Version=v4.6.1.AssemblyAttributes.cpp
+  Shim.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
+Shim.obj : error LNK2028: unresolved token (0A0004B0) "public: class AbstractPublisher * __cdecl ObjectFactory::createClient(void)" (?createClient@ObjectFactory@@$$FQEAAPEAVAbstractPublisher@@XZ) referenced in function "public: __clrcall Shim::Shim(void)" (??0Shim@@$$FQE$AAM@XZ)
+Shim.obj : error LNK2019: unresolved external symbol "public: class AbstractPublisher * __cdecl ObjectFactory::createClient(void)" (?createClient@ObjectFactory@@$$FQEAAPEAVAbstractPublisher@@XZ) referenced in function "public: __clrcall Shim::Shim(void)" (??0Shim@@$$FQE$AAM@XZ)
+C:\Users\VijayThyagarajan\Desktop\Project_3\x64\Debug\Shim.exe : fatal error LNK1120: 2 unresolved externals

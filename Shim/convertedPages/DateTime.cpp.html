@@ -1,0 +1,384 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="DateTime.h.html">DateTime.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// DateTime.cpp - represents clock time                            //</div>
+<div class ="toggleCommentDisplay">/// ver 1.1                                                         //</div>
+<div class ="toggleCommentDisplay">/// Jim Fawcett, CSE687 - Object Oriented Design, Spring 2017       //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+
+#include "DateTime.h"
+#include &lt;string&gt;
+#include &lt;iomanip&gt;
+#include &lt;sstream&gt;
+#include &lt;iostream&gt;
+#include &lt;unordered_map&gt;
+
+<div class ="toggleCommentDisplay">///----&lt; replaces std::ctime using ctime_s &gt;--------------------------</div>
+
+char* DateTime::ctime(const std::time_t* pTime)
+ <span class='toggleMethodDisplay'>{
+  const rsize_t buffSize = 26;
+  static char buffer[buffSize];
+  errno_t err = ctime_s(buffer, buffSize, pTime);
+  return buffer;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; replaces std::localtime using localtime_s &gt;------------------</div>
+
+std::tm* DateTime::localtime(const std::time_t* pTime)
+ <span class='toggleMethodDisplay'>{
+  static std::tm result;
+  errno_t err = localtime_s(&result, pTime);
+  return &result;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; construct DateTime instance with current system time &gt;-------</div>
+
+DateTime::DateTime()
+ <span class='toggleMethodDisplay'>{
+  tp_ = SysClock::now();
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; construct DateTime from formatted time string &gt;--------------</div>
+<div class ="toggleCommentDisplay">//* 
+ * Helper function that reads each part of the formatted string 
+ */</div>
+int readDateTimePart(int& part, std::istringstream& in)
+ <span class='toggleMethodDisplay'>{
+  if (in.peek() == ':')
+    in.get();
+  in &gt;&gt; part;
+  <div class ="toggleCommentDisplay">///std::cout &lt;&lt; "\n  -- part = " &lt;&lt; part &lt;&lt; " --";</div>
+  if (in.good())
+    return part;
+  return -1;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; makes a DateTime instance from a formatted string &gt;----------</div>
+<div class ="toggleCommentDisplay">//*
+*  Throws exception if string is an invalid DateTime string
+*/</div>
+DateTime::DateTime(std::string dtStr)
+ <span class='toggleMethodDisplay'>{
+  static std::unordered_map&lt;std::string, size_t&gt; months = {
+    { "Jan", 1 }, { "Feb", 2 }, { "Mar", 3 }, { "Apr", 4 }, 
+    { "May", 5 }, { "Jun", 6 }, { "Jul", 7 }, { "Aug", 8 }, 
+    { "Sep", 9 }, { "Oct", 10 }, { "Nov", 11 }, { "Dec", 12 } 
+  };
+  std::istringstream in(dtStr);
+  std::string day, month;
+  in &gt;&gt; day;
+  in &gt;&gt; month;
+  if (!in.good())
+    throw std::exception("invalid DateTime string");
+  std::tm date;
+  date.tm_mon = months[month] - 1;
+  readDateTimePart(date.tm_mday, in);
+  readDateTimePart(date.tm_hour, in);
+  readDateTimePart(date.tm_min, in);
+  readDateTimePart(date.tm_sec, in);
+  readDateTimePart(date.tm_year, in);
+  date.tm_year -= 1900;
+  date.tm_isdst = -1;
+  std::time_t time = std::mktime(&date);
+  if (time == -1)
+  {
+    throw "invalid system time";
+  }
+  tp_ = SysClock::from_time_t(time);  
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; cast operator converts to time formatted string &gt;------------</div>
+
+DateTime::operator std::string()
+ <span class='toggleMethodDisplay'>{
+  return time();
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; construct DateTime instance from time point &gt;----------------</div>
+
+ <span class='toggleMethodDisplay'>DateTime::DateTime(const DateTime::TimePoint& tp) : tp_(tp) {}</span>
+
+<div class ="toggleCommentDisplay">///----&lt; make a time from integral parts &gt;----------------------------</div>
+
+DateTime::TimePoint DateTime::makeTime(
+  size_t year, size_t mon, size_t day, size_t hour, size_t min, size_t sec
+)
+ <span class='toggleMethodDisplay'>{
+  struct std::tm t;
+  t.tm_sec = sec;
+  t.tm_min = min;
+  t.tm_hour = hour;
+  t.tm_mday = day;
+  t.tm_mon = mon-1;
+  t.tm_year = year - 1900;
+  t.tm_isdst = -1;
+  std::time_t time = std::mktime(&t);
+  if (time == -1)
+  {
+    throw "invalid system time";
+  }
+  return SysClock::from_time_t(time);
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; make duration from integral parts &gt;--------------------------</div>
+
+DateTime::Duration DateTime::makeDuration(
+  size_t hour, size_t min, size_t sec, size_t millisec
+)
+ <span class='toggleMethodDisplay'>{
+  Duration dur = 
+    std::chrono::milliseconds(millisec) + 
+    std::chrono::seconds(sec) + 
+    std::chrono::minutes(min) + 
+    std::chrono::hours(hour);
+  return dur;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; set time to system time &gt;------------------------------------</div>
+
+std::string DateTime::now()
+ <span class='toggleMethodDisplay'>{
+  TimePoint tp = SysClock::now();
+  std::time_t t = SysClock::to_time_t(tp);
+  std::string ts = ctime(&t);
+  ts.resize(ts.size() - 1);
+  return ts;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; return internal time point &gt;---------------------------------</div>
+
+DateTime::TimePoint DateTime::timepoint()
+ <span class='toggleMethodDisplay'>{
+  return tp_;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; return seconds from Jan 1 1990 at midnight &gt;-----------------</div>
+
+size_t DateTime::ticks()
+ <span class='toggleMethodDisplay'>{
+  auto int_sec = std::chrono::duration_cast&lt;std::chrono::seconds&gt;(tp_.time_since_epoch());
+  return static_cast&lt;size_t&gt;(int_sec.count());
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; return formatted time string &gt;-------------------------------</div>
+
+std::string DateTime::time()
+ <span class='toggleMethodDisplay'>{
+  std::time_t t = SysClock::to_time_t(tp_);
+  std::string ts = ctime(&t);
+  ts.resize(ts.size() - 1);
+  return ts;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; compare DateTime instances &gt;---------------------------------</div>
+
+bool DateTime::operator&lt;(const DateTime& dt)
+ <span class='toggleMethodDisplay'>{
+  return tp_ &lt; dt.tp_;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; compare DateTime instances &gt;---------------------------------</div>
+
+bool DateTime::operator&gt;(const DateTime& dt)
+ <span class='toggleMethodDisplay'>{
+  return tp_ &gt; dt.tp_;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; compare DateTime instances &gt;---------------------------------</div>
+
+bool DateTime::operator==(const DateTime& dt)
+ <span class='toggleMethodDisplay'>{
+  return tp_ == dt.tp_;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; compare DateTime instances &gt;---------------------------------</div>
+
+bool DateTime::operator!=(const DateTime& dt)
+{
+  return tp_ != dt.tp_;
+}
+<div class ="toggleCommentDisplay">///----&lt; compare DateTime instances &gt;---------------------------------</div>
+
+bool DateTime::operator&lt;=(const DateTime& dt)
+ <span class='toggleMethodDisplay'>{
+  return tp_ &lt;= dt.tp_;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; compare DateTime instances &gt;---------------------------------</div>
+
+bool DateTime::operator&gt;=(const DateTime& dt)
+ <span class='toggleMethodDisplay'>{
+  return tp_ &gt;= dt.tp_;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; add a duration to DateTime instance &gt;------------------------</div>
+
+DateTime DateTime::operator+=(const DateTime::Duration& dur)
+ <span class='toggleMethodDisplay'>{
+  tp_ += dur;
+  return *this;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; make DateTime from instance time plus duration &gt;-------------</div>
+
+DateTime DateTime::operator+(const DateTime::Duration& dur)
+ <span class='toggleMethodDisplay'>{
+
+  return DateTime(tp_ + dur);
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; subtract a duration from instance &gt;--------------------------</div>
+
+DateTime DateTime::operator-=(const DateTime::Duration& dur)
+ <span class='toggleMethodDisplay'>{
+  tp_ -= dur;
+  return *this;
+}</span>
+<div class ="toggleCommentDisplay">///---- make DateTime from instance time minus duration &gt;-------------</div>
+
+DateTime DateTime::operator-(const DateTime::Duration& dur)
+ <span class='toggleMethodDisplay'>{
+  return DateTime(tp_ - dur);
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; return year count &gt;------------------------------------------</div>
+
+size_t DateTime::year()
+ <span class='toggleMethodDisplay'>{
+  std::time_t t = SysClock::to_time_t(tp_);
+  std::tm tm = *localtime(&t);
+  return tm.tm_year;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; return month count &gt;-----------------------------------------</div>
+
+size_t DateTime::month()
+ <span class='toggleMethodDisplay'>{
+  std::time_t t = SysClock::to_time_t(tp_);
+  std::tm tm = *localtime(&t);
+  return tm.tm_mon;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; return day count &gt;-------------------------------------------</div>
+
+size_t DateTime::day()
+ <span class='toggleMethodDisplay'>{
+  std::time_t t = SysClock::to_time_t(tp_);
+  std::tm tm = *localtime(&t);
+  return tm.tm_mday;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; return hour count &gt;------------------------------------------</div>
+
+size_t DateTime::hour()
+ <span class='toggleMethodDisplay'>{
+  std::time_t t = SysClock::to_time_t(tp_);
+  std::tm tm = *localtime(&t);
+  return tm.tm_hour;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; return minutes count &gt;---------------------------------------</div>
+
+size_t DateTime::minute()
+ <span class='toggleMethodDisplay'>{
+  std::time_t t = SysClock::to_time_t(tp_);
+  std::tm tm = *localtime(&t);
+  return tm.tm_min;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; return seconds count &gt;---------------------------------------</div>
+
+size_t DateTime::second()
+ <span class='toggleMethodDisplay'>{
+  std::time_t t = SysClock::to_time_t(tp_);
+  std::tm tm = *localtime(&t);
+  return tm.tm_sec;
+}</span>
+
+<div class ="toggleCommentDisplay">///----&lt; test stub &gt;--------------------------------------------------</div>
+
+#ifdef TEST_DATETIME
+
+#include &lt;iostream&gt;
+#include "../Utilities/StringUtilities/StringUtilities.h"
+
+int main()
+ <span class='toggleMethodDisplay'>{
+  Utilities::Title("Testing DateTime class");
+ 
+  try {
+    DateTime dt;
+    std::cout &lt;&lt; "\n  " &lt;&lt; dt.time();
+    dt += DateTime::makeDuration(24, 0);
+    std::cout &lt;&lt; "\n  " &lt;&lt; dt.time();
+    dt += DateTime::makeDuration(1, 10);
+    std::cout &lt;&lt; "\n  " &lt;&lt; dt.time();
+    DateTime now;
+    std::cout &lt;&lt; "\n  using cast operator: " &lt;&lt; static_cast&lt;std::string&gt;(now);
+
+    if (now &lt; dt)
+      std::cout &lt;&lt; "\n  " &lt;&lt; now.time() &lt;&lt; " is less than " &lt;&lt; dt.time();
+    else
+      std::cout &lt;&lt; "\n  " &lt;&lt; now.time() &lt;&lt; " is not less than " &lt;&lt; dt.time();
+    std::cout &lt;&lt; "\n  now.ticks() = " &lt;&lt; now.ticks();
+    std::cout &lt;&lt; "\n  constructing DateTime from formated DateTime string";
+    DateTime newDt(dt.time());
+    std::cout &lt;&lt; "\n  " &lt;&lt; newDt.time();
+  }
+  catch (std::exception& ex)
+  {
+    std::cout &lt;&lt; "\n\n  -- " &lt;&lt; ex.what() &lt;&lt; " --";
+  }
+  std::cout &lt;&lt; "\n\n";
+}</span>
+#endif
+
+
+</pre>
+</body>
+</html>
+

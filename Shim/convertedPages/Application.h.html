@@ -1,0 +1,183 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Application.h - provides demonstration methods doFile and doDir   //</div>
+<div class ="toggleCommentDisplay">/// ver 1.1                                                           //</div>
+<div class ="toggleCommentDisplay">/// Jim Fawcett, CSE687 - Object Oriented Design, Fall 2018           //</div>
+<div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+*  Package Operations:
+*  -------------------
+*  This package represents an application that needs to navigate directories
+*  as part of its application.  It uses DirExploreT, with no modification
+*  for the application's needs.
+*
+*  Required Files:
+*  ---------------
+*  Application.h, application.cpp
+*  DirExplorerT.h, DirExplorerT.cpp  <div class ="toggleCommentDisplay">/// DirExplorerT.cpp just for testing</div>
+*  FileSystem.h, ,FileSystem.cpp
+*
+*  Maintenance History:
+*  --------------------
+*  ver 1.1 : 19 Aug 2018
+*  - Converted to inline methods declared below class declaration.
+*  - Added all the applications processing to main.
+*  ver 1.0 : 11 Aug 2018
+*  - first release
+*/</div>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+class Application
+ <span class='toggleClassDisplay'> {
+public:
+  Application();
+  
+  <div class ="toggleCommentDisplay">/// Application defines how to handle files and dirs, when to</div>
+  <div class ="toggleCommentDisplay">/// quit, and how to display final results.</div>
+  <div class ="toggleCommentDisplay">/// None of this requires alteration of DirExplorerT's code.</div>
+
+  void doFile(const std::string& filename);
+  void doDir(const std::string& dirname);
+  size_t fileCount();
+  size_t dirCount();
+  bool done();
+  void showStats();
+
+  <div class ="toggleCommentDisplay">/// configure application options</div>
+
+  void showAllInCurrDir(bool showAllFilesInCurrDir);
+  bool showAllInCurrDir();
+  void maxItems(size_t maxItems);
+  
+private:
+  size_t fileCount_ = 0;  <div class ="toggleCommentDisplay">/// number of files processed</div>
+  size_t dirCount_ = 0;   <div class ="toggleCommentDisplay">/// number of directories processed</div>
+  size_t maxItems_ = 0;   <div class ="toggleCommentDisplay">/// upper bound on number of files to process</div>
+  bool showAll_ = false;  <div class ="toggleCommentDisplay">/// if true, show empty directories</div>
+};</span>
+
+inline Application::Application()
+ <span class='toggleMethodDisplay'>{
+  std::cout &lt;&lt; "\n  Using Application methods doFile and doDir\n";
+}</span>
+inline void Application::doFile(const std::string& filename)
+ <span class='toggleMethodDisplay'>{
+  ++fileCount_;
+  if(showAll_ || !done())
+  {
+    std::cout &lt;&lt; "\n  file--&gt;    " &lt;&lt; filename;
+  }
+}</span>
+inline void Application::doDir(const std::string& dirname)
+ <span class='toggleMethodDisplay'>{
+  ++dirCount_;
+  std::cout &lt;&lt; "\n  dir---&gt;  " &lt;&lt; dirname;
+}</span>
+inline size_t Application::fileCount()
+ <span class='toggleMethodDisplay'>{
+  return fileCount_;
+}</span>
+inline size_t Application::dirCount()
+ <span class='toggleMethodDisplay'>{
+  return dirCount_;
+}</span>
+inline void Application::showAllInCurrDir(bool showAllFilesInCurrDir)
+ <span class='toggleMethodDisplay'>{
+  showAll_ = showAllFilesInCurrDir;
+}</span>
+inline bool Application::showAllInCurrDir()
+ <span class='toggleMethodDisplay'>{
+  return showAll_;
+}</span>
+inline void Application::maxItems(size_t maxItems)
+ <span class='toggleMethodDisplay'>{
+  maxItems_ = maxItems;
+}</span>
+<div class ="toggleCommentDisplay">///----&lt; show final counts for files and dirs &gt;---------------------</div>
+
+inline void Application::showStats()
+ <span class='toggleMethodDisplay'>{
+  std::cout &lt;&lt; "\n\n  processed " &lt;&lt; fileCount_ &lt;&lt; " files in " &lt;&lt; dirCount_ &lt;&lt; " directories";
+  if(done())
+  {
+    std::cout &lt;&lt; "\n  stopped because max number of files exceeded";
+  }
+}</span>
+inline bool Application::done()
+ <span class='toggleMethodDisplay'>{
+  return (0 &lt; maxItems_ && maxItems_ &lt; fileCount_);
+}</span>
+
+
+</pre>
+</body>
+</html>
+

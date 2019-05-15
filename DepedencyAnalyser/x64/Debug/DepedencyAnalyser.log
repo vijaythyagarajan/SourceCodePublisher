@@ -1,0 +1,4 @@
+﻿  DependencyAnalyser.cpp
+  DependencyTable.cpp
+  Generating Code...
+LINK : fatal error LNK1561: entry point must be defined

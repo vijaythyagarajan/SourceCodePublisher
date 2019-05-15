@@ -1,0 +1,167 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="Display.h.html">Display.h</a>
+		<a href="FileSystem.h.html">FileSystem.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Display - DisplayFile Package   (Source Code Publisher)         //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019 //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+#include"Display.h"
+#include&lt;iostream&gt;
+#include &lt;regex&gt;
+#include"../Process/Process/Process.h"
+#include "../DirectoryNavigator/FileSystem/FileSystem.h"
+
+<div class ="toggleCommentDisplay">///----&lt;  createDisplayFileList stores the files into the storage filesToDisplay_ &gt;---- -</div>
+ <span class='toggleMethodDisplay'>void DisplayFile::createDisplayFileList(const DisplayFile::files &fileList) {
+	filesToDisplay_ = fileList;
+}</span>
+
+<div class ="toggleCommentDisplay">///----&lt; gets the list of files needs to be displayed  &gt;---- -</div>
+
+ <span class='toggleMethodDisplay'>const DisplayFile::files & DisplayFile::getFilesToDisplay() {
+	return filesToDisplay_;
+}</span>
+
+<div class ="toggleCommentDisplay">///----&lt; Displays converted *html files on Browser using Process Class instance from the list of available *html files   &gt;-----</div>
+ <span class='toggleMethodDisplay'>void DisplayFile::displayFileWithPath() {
+	std::cout &lt;&lt; "\n Demonstrating Requirment 8:";
+	std::cout &lt;&lt; " Converted files are displayed using child process on browser." &lt;&lt; std::endl;
+	std::cout &lt;&lt; "\n  You need to kill each window (upper right button) to continue.\n";
+	std::cout &lt;&lt; "\n 12 files are displayed and there respective path is displayed on the console \n";
+	std::cout &lt;&lt; "\n Each child process on the browser consist of Show/hide comments, Class and function blocks\n";
+	<div class ="toggleCommentDisplay">/// the displayCount is to keep the number of files displayed to a small number.</div>
+	size_t displayCount = 12;
+	Process processObj_;
+	processObj_.title(title_);
+	std::string appPath = "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe";  <div class ="toggleCommentDisplay">/// path to application to start</div>
+	processObj_.application(appPath);
+	auto fileIteratorStartPos = filesToDisplay_.begin();
+	auto fileIteratorEndPos = filesToDisplay_.end();
+	if (filesToDisplay_.size() &gt; displayCount) {
+		 fileIteratorEndPos = fileIteratorStartPos + 20;
+	}
+
+	while( fileIteratorStartPos != fileIteratorEndPos) {
+			std::string val = "--new-window " + *(fileIteratorStartPos);
+			std::string fileName = *fileIteratorStartPos;
+			processObj_.commandLine(val);
+			processObj_.create();
+			CBP callback = [fileName]() {
+				std::cout &lt;&lt; fileName &lt;&lt; std::endl;
+			};
+			processObj_.setCallBackProcessing(callback);
+			processObj_.registerCallback();
+			WaitForSingleObject(processObj_.getProcessHandle(), INFINITE);	
+
+			fileIteratorStartPos++;
+	}
+}</span>
+
+
+<div class ="toggleCommentDisplay">///----&lt; Get the applicationPath for the browser &gt;-----</div>
+ <span class='toggleMethodDisplay'>std::string DisplayFile::getFilePath() {
+	return appPath_;
+}</span>
+
+<div class ="toggleCommentDisplay">///----&lt; Set the applcationPath of browser used to display the converted files &gt;---- -</div>
+ <span class='toggleMethodDisplay'>void DisplayFile::setApplicationPath(const std::string & appPath) {
+	appPath_ = appPath;
+}</span>
+
+<div class ="toggleCommentDisplay">///----&lt; Helper method for creating commandLine for files to display &gt;-----</div>
+ <span class='toggleMethodDisplay'>std::string DisplayFile::createCommandLineForFileName(const std::string & filePath) {
+	std::string commandLineForFile = "/c start \"link\" \"" + filePath;
+	return  commandLineForFile;
+}</span>
+
+
+#ifdef TEST_DISPLAY
+
+ <span class='toggleMethodDisplay'>int main(int argc, char *argv[]) {
+
+	std::vector&lt;std::string&gt; filesList;
+	filesList.push_back("Display.h");
+
+	DisplayFile DisObj_;
+
+	DisObj_.createDisplayFileList(filesList);
+	DisObj_.displayFileWithPath();
+
+	std::cin.get();
+	std::cin.get();
+}</span>
+
+#endif
+
+</pre>
+</body>
+</html>
+

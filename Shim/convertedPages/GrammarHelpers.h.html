@@ -1,0 +1,161 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#ifndef GRAMMARHELPERS_H
+#define GRAMMARHELPERS_H
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// GrammarHelpers.h - Functions providing base grammatical analyses    //</div>
+<div class ="toggleCommentDisplay">/// ver 1.4                                                             //</div>
+<div class ="toggleCommentDisplay">/// Language:    C++, Visual Studio 2015                                //</div>
+<div class ="toggleCommentDisplay">/// Application: Support for Parsing, CSE687 - Object Oriented Design   //</div>
+<div class ="toggleCommentDisplay">/// Author:      Jim Fawcett, Syracuse University, CST 4-187            //</div>
+<div class ="toggleCommentDisplay">///              jfawcett@twcny.rr.com                                  //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+* Package Operations:
+* -------------------
+* This package provides a single class, GrammarHelper, with all static methods.
+* Each method provides a useful piece of analysis on a Semiression, designed
+* to support source code parsing activities.
+*
+* The purpose of this package is to factor out of the ActionsAndRules package
+* some complex processing so it gets implemented in only one place.  It also
+* factors a lot of grammar processing into small testable chunks.
+*
+* Build Process:
+* --------------
+* Required Files:
+*   GrammarHelpers.h, GrammarHelpers.cpp,
+*   Semiression.h, Semiression.cpp, Tokenizer.h, Tokenizer.cpp,
+*   Logger.h, Logger.cpp, Utilities.h, Utilities.cpp
+*
+* Build Command: devenv Analyzer.sln /rebuild debug
+*
+* Maintenance History:
+* --------------------
+* ver 1.4 : 07 Jun 2017
+* - temporarily disabled finding C# lambdas in isFunction
+* ver 1.3 : 26 Feb 2017
+* - modified isFunctionDeclaration to support a bug fix in ActionsAndRules
+*   associated with failure to detect some public data declarations
+* Ver 1.2 : 28 Aug 2016
+* - fixed errors found in last round of testing
+* Ver 1.1 : 25 Aug 2016
+* - added many new functions
+* - changed some of the function signatures
+* Ver 1.0 : 10 Aug 2016
+* - first release
+*
+* Planned Additions and Changes:
+* ------------------------------
+* - These functions may result in scanning a Semi instance several times.
+*   It should be straight forward to reduce some of that.
+*/</div>
+
+
+#include &lt;string&gt;
+#include "../SemiExpression/ITokenCollection.h"
+
+namespace CodeAnalysis
+{
+  class GrammarHelper
+ <span class='toggleClassDisplay'>   {
+  public:
+    static bool isControlKeyWord(const std::string& tok);
+    static bool hasControlKeyWord(const Lexer::ITokenCollection& se);
+    static bool isFunction(const Lexer::ITokenCollection& se);
+    static bool hasArgs(const Lexer::ITokenCollection& se);
+    static bool isFunctionDefinition(const Lexer::ITokenCollection& se);
+    static bool isFunctionDeclaration(const Lexer::ITokenCollection& se, const std::string& parentType);
+    static bool isFunctionInvocation(const Lexer::ITokenCollection& se, const std::string& parentType);
+    static bool hasFunctionInvocation(const Lexer::ITokenCollection& se, const std::string& parentType);
+    static bool isDataDeclaration(const Lexer::ITokenCollection& se);
+    static bool isExecutable(const Lexer::ITokenCollection& se, const std::string& parentType);
+    static size_t findLast(const Lexer::ITokenCollection& se, const std::string& token);
+    static bool isQualifierKeyWord(const std::string& tok);
+    static void removeQualifiers(Lexer::ITokenCollection& tc);
+    static void removeCallingArgQualifiers(Lexer::ITokenCollection& tc);
+    static bool isFirstArgDeclaration(const Lexer::ITokenCollection& tc, const std::string& parentType);
+    static bool hasReturnType(const Lexer::ITokenCollection& tc);
+    static void removeCppInitializers(Lexer::ITokenCollection& tc);
+    static void removeCSharpInitializers(Lexer::ITokenCollection& tc);
+    static void removeComments(Lexer::ITokenCollection& tc);
+    static void condenseTemplateTypes(Lexer::ITokenCollection& tc);
+    static void removeFunctionArgs(Lexer::ITokenCollection& tc);
+    static void showParse(const std::string& msg, const Lexer::ITokenCollection& se, bool isResult = false);
+    static void showParseDemo(const std::string& msg, const Lexer::ITokenCollection& se);
+  };</span>
+}
+#endif
+
+
+</pre>
+</body>
+</html>
+

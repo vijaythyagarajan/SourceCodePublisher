@@ -1,0 +1,238 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#ifndef CPP11_BLOCKINGQUEUE_H
+#define CPP11_BLOCKINGQUEUE_H
+<div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Cpp11-BlockingQueue.h - Thread-safe Blocking Queue        //</div>
+<div class ="toggleCommentDisplay">/// ver 1.4                                                   //</div>
+<div class ="toggleCommentDisplay">/// Jim Fawcett, CSE687 - Object Oriented Design, Spring 2015 //</div>
+<div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+ * Package Operations:
+ * -------------------
+ * This package contains one thread-safe class: BlockingQueue&lt;T&gt;.
+ * Its purpose is to support sending messages between threads.
+ * It is implemented using C++11 threading constructs including 
+ * std::condition_variable and std::mutex.  The underlying storage
+ * is provided by the non-thread-safe std::queue&lt;T&gt;.
+ *
+ * Required Files:
+ * ---------------
+ * Cpp11-BlockingQueue.h
+ *
+ * Build Process:
+ * --------------
+ * devenv Cpp11-BlockingQueue.sln /rebuild debug
+ *
+ * Maintenance History:
+ * --------------------
+ * ver 1.4 : 29 Jul 2016
+ * - wrapped with namespace Async
+ * ver 1.3 : 04 Mar 2016
+ * - changed behavior of front() to throw exception
+ *   on empty queue.
+ * - added comment about std::unique_lock in deQ()
+ * ver 1.2 : 27 Feb 2016
+ * - added front();
+ * - added move ctor and move assignment
+ * - deleted copy ctor and copy assignment
+ * ver 1.1 : 26 Jan 2015
+ * - added copy constructor and assignment operator
+ * ver 1.0 : 03 Mar 2014
+ * - first release
+ *
+ */</div>
+
+#include &lt;condition_variable&gt;
+#include &lt;mutex&gt;
+#include &lt;thread&gt;
+#include &lt;queue&gt;
+#include &lt;string&gt;
+#include &lt;iostream&gt;
+#include &lt;sstream&gt;
+
+namespace Async
+{
+  template &lt;typename T&gt;
+ <span class='toggleClassDisplay'>   class BlockingQueue {
+  public:
+ <span class='toggleMethodDisplay'>    BlockingQueue() {}</span>
+    BlockingQueue(BlockingQueue&lt;T&gt;&& bq);
+    BlockingQueue&lt;T&gt;& operator=(BlockingQueue&lt;T&gt;&& bq);
+    BlockingQueue(const BlockingQueue&lt;T&gt;&) = delete;
+    BlockingQueue&lt;T&gt;& operator=(const BlockingQueue&lt;T&gt;&) = delete;
+    T deQ();
+    void enQ(const T& t);
+    T& front();
+    void clear();
+    size_t size();
+  private:
+    std::queue&lt;T&gt; q_;
+    std::mutex mtx_;
+    std::condition_variable cv_;
+  };</span>
+  <div class ="toggleCommentDisplay">///----&lt; move constructor &gt;---------------------------------------------</div>
+
+  template&lt;typename T&gt;
+  BlockingQueue&lt;T&gt;::BlockingQueue(BlockingQueue&lt;T&gt;&& bq) <div class ="toggleCommentDisplay">/// need to lock so can't initialize</div>
+ <span class='toggleMethodDisplay'>  {
+    std::lock_guard&lt;std::mutex&gt; l(mtx_);
+    q_ = bq.q_;
+    while (bq.q_.size() &gt; 0)  <div class ="toggleCommentDisplay">/// clear bq</div>
+      bq.q_.pop();
+    <div class ="toggleCommentDisplay">//* can't copy  or move mutex or condition variable, so use default members */</div>
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; move assignment &gt;----------------------------------------------</div>
+
+  template&lt;typename T&gt;
+  BlockingQueue&lt;T&gt;& BlockingQueue&lt;T&gt;::operator=(BlockingQueue&lt;T&gt;&& bq)
+ <span class='toggleMethodDisplay'>  {
+    if (this == &bq) return *this;
+    std::lock_guard&lt;std::mutex&gt; l(mtx_);
+    q_ = bq.q_;
+    while (bq.q_.size() &gt; 0)  <div class ="toggleCommentDisplay">/// clear bq</div>
+      bq.q_.pop();
+    <div class ="toggleCommentDisplay">//* can't move assign mutex or condition variable so use target's */</div>
+    return *this;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; remove element from front of queue &gt;---------------------------</div>
+
+  template&lt;typename T&gt;
+  T BlockingQueue&lt;T&gt;::deQ()
+ <span class='toggleMethodDisplay'>  {
+    std::unique_lock&lt;std::mutex&gt; l(mtx_);
+    <div class ="toggleCommentDisplay">//*
+       This lock type is required for use with condition variables.
+       The operating system needs to lock and unlock the mutex:
+       - when wait is called, below, the OS suspends waiting thread
+         and releases lock.
+       - when notify is called in enQ() the OS relocks the mutex,
+         resumes the waiting thread and sets the condition variable to
+         signaled state.
+       std::lock_quard does not have public lock and unlock functions.
+     */</div>
+    if (q_.size() &gt; 0)
+    {
+      T temp = q_.front();
+      q_.pop();
+      return temp;
+    }
+    <div class ="toggleCommentDisplay">/// may have spurious returns so loop on !condition</div>
+
+    while (q_.size() == 0)
+      cv_.wait(l, [this]() { return q_.size() &gt; 0; });
+    T temp = q_.front();
+    q_.pop();
+    return temp;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; push element onto back of queue &gt;------------------------------</div>
+
+  template&lt;typename T&gt;
+  void BlockingQueue&lt;T&gt;::enQ(const T& t)
+ <span class='toggleMethodDisplay'>  {
+    {
+      std::unique_lock&lt;std::mutex&gt; l(mtx_);
+      q_.push(t);
+    }
+    cv_.notify_one();
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; peek at next item to be popped &gt;-------------------------------</div>
+
+  template &lt;typename T&gt;
+  T& BlockingQueue&lt;T&gt;::front()
+ <span class='toggleMethodDisplay'>  {
+    std::lock_guard&lt;std::mutex&gt; l(mtx_);
+    if (q_.size() &gt; 0)
+      return q_.front();
+    throw std::exception("attempt to deQue empty queue");
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; remove all elements from queue &gt;-------------------------------</div>
+
+  template &lt;typename T&gt;
+  void BlockingQueue&lt;T&gt;::clear()
+ <span class='toggleMethodDisplay'>  {
+    std::lock_guard&lt;std::mutex&gt; l(mtx_);
+    while (q_.size() &gt; 0)
+      q_.pop();
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; return number of elements in queue &gt;---------------------------</div>
+
+  template&lt;typename T&gt;
+  size_t BlockingQueue&lt;T&gt;::size()
+ <span class='toggleMethodDisplay'>  {
+    std::lock_guard&lt;std::mutex&gt; l(mtx_);
+    return q_.size();
+  }</span>
+}
+#endif
+
+
+</pre>
+</body>
+</html>
+

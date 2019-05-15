@@ -1,0 +1,4 @@
+C:\Users\VijayThyagarajan\Desktop\Project_3\WPF\obj\x64\Debug\MainWindow.g.cs
+C:\Users\VijayThyagarajan\Desktop\Project_3\WPF\obj\x64\Debug\App.g.cs
+C:\Users\VijayThyagarajan\Desktop\Project_3\WPF\obj\x64\Debug\WPF_MarkupCompile.cache
+C:\Users\VijayThyagarajan\Desktop\Project_3\WPF\obj\x64\Debug\WPF_MarkupCompile.lref

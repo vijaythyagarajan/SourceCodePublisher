@@ -1,0 +1,151 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// DateTime.h - represents clock time                              //</div>
+<div class ="toggleCommentDisplay">/// ver 1.1                                                         //</div>
+<div class ="toggleCommentDisplay">/// Jim Fawcett, CSE687 - Object Oriented Design, Spring 2017       //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+ * Package Operations:
+ * -------------------
+ * The DateTime class represents clock time, and supports:
+ * - creating default instances and instances from specific time points
+ * - return times as formatted strings
+ * - building time points and durations from years, months, days, hours, ...
+ * - performing addition and subtraction of times
+ * - comparing times
+ * - extracting counts of years, months, days, hours, minutes, and seconds
+ *
+ * Required Files:
+ * ---------------
+ *   DateTime.h, DateTime.cpp
+ *
+ * Maintenance History:
+ * --------------------
+ * ver 1.1 : 10 Feb 2018
+ * - added operator==, operator!=, operator&lt;=, and operator&gt;=
+ * ver 1.0 : 18 Feb 2018
+ * - first release
+*/</div>
+
+#include &lt;chrono&gt;
+#include &lt;ctime&gt;
+#include &lt;string&gt;
+
+class DateTime
+ <span class='toggleClassDisplay'> {
+public:
+  using SysClock = std::chrono::system_clock;
+  using TimePoint = std::chrono::system_clock::time_point;
+  using Duration = std::chrono::system_clock::duration;
+
+  DateTime();
+  DateTime(std::string dtStr);
+  DateTime(const TimePoint& tp);
+  operator std::string();
+
+  std::string now();
+  TimePoint timepoint();
+  size_t ticks();
+  std::string time();
+  static TimePoint makeTime(
+    size_t yrs, size_t mon, size_t day, 
+    size_t hrs = 0, size_t min = 0, size_t sec = 0
+  );
+  static Duration makeDuration(
+    size_t hrs, size_t min, size_t sec = 0, size_t millisec = 0
+  );
+  
+  DateTime operator+=(const Duration& dt);
+  DateTime operator+(const Duration& dt);
+  DateTime operator-=(const Duration& dt);
+  DateTime operator-(const Duration& dt);
+  bool operator&lt;(const DateTime& dt);
+  bool operator&gt;(const DateTime& dt);
+  bool operator==(const DateTime& dt);
+  bool operator!=(const DateTime& dt);
+  bool operator&lt;=(const DateTime& dt);
+  bool operator&gt;=(const DateTime& dt);
+
+  size_t year();
+  size_t month();
+  size_t day();
+  size_t hour();
+  size_t minute();
+  size_t second();
+private:
+  char* ctime(const std::time_t* pTime);
+  std::tm* localtime(const time_t* pTime);
+  TimePoint tp_;
+};</span>
+
+</pre>
+</body>
+</html>
+

@@ -1,0 +1,13 @@
+﻿  AbstrSynTree.cpp
+  FileSystem.cpp
+  GrammarHelpers.cpp
+  Logger.cpp
+  ScopeStack.cpp
+  Semi.cpp
+  Toker.cpp
+  Utilities.cpp
+  ActionsAndRules.cpp
+  ConfigureParser.cpp
+  Parser.cpp
+  Generating Code...
+  Parser.vcxproj -> C:\Users\VijayThyagarajan\Desktop\Project_3\x64\Debug\Parser.exe

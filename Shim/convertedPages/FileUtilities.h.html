@@ -1,0 +1,240 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="FileSystem.h.html">FileSystem.h</a>
+		<a href="Environment.h.html">Environment.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// FileUtilities.h - facilities for interacting with files           //</div>
+<div class ="toggleCommentDisplay">/// ver 1.1                                                           //</div>
+<div class ="toggleCommentDisplay">/// Language:    C++, Visual Studio 2017                              //</div>
+<div class ="toggleCommentDisplay">/// Application: Project #1 - F2018, CSE687 - Object Oriented Design  //</div>
+<div class ="toggleCommentDisplay">/// Author:      Jim Fawcett, Syracuse University, CST 4-187          //</div>
+<div class ="toggleCommentDisplay">///              jfawcett@twcny.rr.com                                //</div>
+<div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+* Package Operations:
+* -------------------
+* This package provides three global functions:
+* - displayFileContents(msg, fileSpec, ostream)
+*   Writes msg, then file contents to ostream
+* - showDirContents(path, msg, patterns, ostream)
+*   Display msg, then contents of directory path matching patterns.
+* - showFileLines(path, startLine, endLine, msg, ostream)
+*   Display msg, then segment of file between startLine and endLine.
+*
+* Required Files:
+* ---------------
+*   FileUtilities.h
+*   StringUtilities.h
+*
+* Maintenance History:
+* --------------------
+* ver 1.1 : 11 Oct 2018
+* - moved some definitions to Environment.h
+* ver 1.0 : 27 Sep 2018
+* - first release
+*
+* Notes:
+* ------
+* - Designed to provide all functionality in header file.
+* - Implementation file only needed for test and demo.
+*
+* Planned Additions and Changes:
+* ------------------------------
+* - implement secondary sort on extensions in showDirContents
+*/</div>
+
+#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+#include &lt;sstream&gt;   <div class ="toggleCommentDisplay">/// defines std::getline(std::istream, std::string)</div>
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;algorithm&gt;
+#include "../StringUtilities/StringUtilities.h"
+#include "../FileSystem/FileSystem.h"
+#include "../UtilitiesEnvironment/Environment.h"
+
+namespace Utilities
+{
+  using Message = std::string;
+  using Line = size_t;
+
+  <div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////</div>
+  <div class ="toggleCommentDisplay">/// Defined in UtilitiesEnvironment/Environment.h</div>
+  <div class ="toggleCommentDisplay">/// using PathStr = std::string;</div>
+  <div class ="toggleCommentDisplay">/// using File = std::string;</div>
+  <div class ="toggleCommentDisplay">/// using Files = std::vector&lt;File&gt;;</div>
+  <div class ="toggleCommentDisplay">/// using Pattern = std::string;</div>
+  <div class ="toggleCommentDisplay">/// using Patterns = std::vector&lt;Pattern&gt;;</div>
+
+  <div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////</div>
+  <div class ="toggleCommentDisplay">/// displayFileContents function</div>
+  <div class ="toggleCommentDisplay">/// - attempts to open fileSpec</div>
+  <div class ="toggleCommentDisplay">/// - if successful, reads lines until ostream.good() returns false</div>
+  <div class ="toggleCommentDisplay">/// - displays each line on the console</div>
+
+  inline bool displayFileContents(
+    const std::string& msg,        <div class ="toggleCommentDisplay">/// msg to display first</div>
+    const std::string& fileSpec,   <div class ="toggleCommentDisplay">/// path to file</div>
+    std::ostream& out = std::cout  <div class ="toggleCommentDisplay">/// stream to write output</div>
+  )
+ <span class='toggleMethodDisplay'>  {
+    if (msg.size() &gt; 0)
+    {
+      out &lt;&lt; "\n\n  " &lt;&lt; msg.c_str();
+    }
+    std::ifstream inFileStrm_(fileSpec);
+    if (!inFileStrm_.good())
+    {
+      out &lt;&lt; "\n  can't open " &lt;&lt; fileSpec.c_str() &lt;&lt; "\n";
+      return false;
+    }
+    while (inFileStrm_.good())
+    {
+      std::string line;
+      std::getline(inFileStrm_, line);
+      out &lt;&lt; "\n" &lt;&lt; line.c_str();
+    }
+    return true;
+  }</span>
+
+  <div class ="toggleCommentDisplay">///----&lt; show all C++ source files in path &gt;------------------------</div>
+
+  inline bool showDirContents(
+    const PathStr& path, 
+    const Message& msg = "",
+    const Patterns& patterns = Patterns(),
+    std::ostream& out = std::cout
+  )
+ <span class='toggleMethodDisplay'>  {
+    if (msg.size() &gt; 0)
+      Utilities::title(msg);
+    out &lt;&lt; "\n  " &lt;&lt; FileSystem::Path::getFullFileSpec(path);
+    if (!FileSystem::Directory::exists(path))
+    {
+      out &lt;&lt; "\n  path does not exist";
+      return false;
+    }
+    Patterns tempPatts = patterns;
+    if (tempPatts.size() == 0)
+      tempPatts.push_back("*.*");
+    Files files;
+    for (auto patt : tempPatts)
+    {
+      Files currentFiles = FileSystem::Directory::getFiles(path, patt);
+      files.insert(files.end(), currentFiles.begin(), currentFiles.end());
+    }
+    std::sort(files.begin(), files.end());
+    for (auto file : files)
+    {
+      out &lt;&lt; "\n    " &lt;&lt; file;
+    }
+    out &lt;&lt; "\n";
+    return true;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; show specified contiguous lines from a code file &gt;---------</div>
+
+  inline bool showFileLines(
+    const PathStr& path, 
+    Line start, Line end, 
+    const Message& msg = "", 
+    std::ostream& out = std::cout
+  )
+ <span class='toggleMethodDisplay'>  {
+    if (msg.size() &gt; 0)
+      Utilities::title(msg);
+    out &lt;&lt; "\n  " &lt;&lt; FileSystem::Path::getFullFileSpec(path);
+
+    std::ifstream file(path);
+    if (!file.good())
+    {
+      out &lt;&lt; "\n  can't open file";
+      return false;
+    }
+
+    std::string line;
+    size_t count = 0;
+    while (std::getline(file, line))
+    {
+      if (++count &lt; start) continue;
+      if (count &gt; end) break;
+      out &lt;&lt; "\n  " &lt;&lt; std::setw(4) &lt;&lt; count &lt;&lt; " " &lt;&lt; line;
+    }
+    out &lt;&lt; "\n";
+    return true;
+  }</span>
+}
+
+</pre>
+</body>
+</html>
+

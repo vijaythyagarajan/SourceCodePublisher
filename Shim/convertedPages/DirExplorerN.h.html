@@ -1,0 +1,296 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="FileSystem.h.html">FileSystem.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// DirExplorerN.h - Naive directory explorer                       //</div>
+<div class ="toggleCommentDisplay">/// ver 1.3                                                         //</div>
+<div class ="toggleCommentDisplay">/// Jim Fawcett, CSE687 - Object Oriented Design, Fall 2018         //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+ * Package Operations:
+ * -------------------
+ * DirExplorerN provides a class, of the same name, that executes a
+ * depth first search of a directory tree rooted at a specified path.
+ * Each time it enters a directory, it invokes its member function
+ * doDir, and for every file in that directory, it invokes doFile.
+ *
+ * We call this a "Naive Directory Explorer" because, while it carries
+ * out its assigned responsibilities well, there is no way to change
+ * what its doDir and doFile functions do, without changing the class
+ * itself.  It would be much better to provide a mechanism to allow
+ * a using application to supply this processing without changing
+ * the Directory Navigator. 
+ *
+ * Other projects in the DirectoryNavigator folder in Repository/Cpp 
+   do just that, in different ways.  
+
+ * - DirExplorer-Naive (this project):
+ *     Implements basic processing well, but applications have to
+ *     change its code to affect how files and directories are
+ *     handled.
+ * - DirExplorer-Template:
+ *     Applications provide template class parameters to define file
+ *     and directory processing.
+ * - DirExplorer-Inheritance:
+ *     Applications subclass DirExplorerI, overriding virtual functions
+ *     doFile, doDir, and doQuit to define how files and directories
+ *     are handled, and whether processing should terminate before
+ *     visiting all directories.
+ * - DirExplorer-Events:
+ *     Applications use Event Interfaces, published by DirExplorerE,
+ *     by subscribing event-handler functions, and control terminate
+ *      processing using a plug-in interface.
+ * - DirExplorer-Provider:
+ *     Applications implement a file system provider that implements
+ *     a Provider interface published by DirExplorerP.
+ *     
+ * We'll be using the Repository/Cpp solution to illustrate techniques 
+ * for building flexible software.
+ *
+ * Required Files:
+ * ---------------
+ * DirExplorerN.h, DirExplorerN.cpp
+ * FileSystem.h, FileSystem.cpp      <div class ="toggleCommentDisplay">/// Directory and Path classes</div>
+ * StringUtilities.h                 <div class ="toggleCommentDisplay">/// Title function</div>
+ * CodeUtilities.h                   <div class ="toggleCommentDisplay">/// ProcessCmdLine class</div>
+ *
+ * Maintenance History:
+ * --------------------
+ * ver 1.4 : 24 Jan 2019
+ * - Removed all projects except those needed for DirExplorerN.
+ * ver 1.3 : 19 Aug 2018
+ * - Removed some options to make this version simple.  Those are
+ *   implemented in the more advanced navigators, presented here.
+ * ver 1.2 : 17 Aug 2018
+ * - Moved method definitions to inlines, below the class declaration.
+ * ver 1.1 : 16 Aug 2018
+ * - Made no recursion default, added option /s for recursion.
+ * ver 1.0 : 11 Aug 2018
+ * - first release
+ *
+*/</div>
+#include &lt;vector&gt;
+#include &lt;iostream&gt;
+#include "../FileSystem/FileSystem.h"
+
+namespace FileSystem
+{
+  class DirExplorerN
+ <span class='toggleClassDisplay'>   {
+  public:
+    using patterns = std::vector&lt;std::string&gt;;
+	using files = std::vector&lt;std::string&gt;;
+
+ <span class='toggleMethodDisplay'>    static std::string version() { return "ver 1.3"; }</span>
+
+    DirExplorerN(const std::string& path);
+
+    <div class ="toggleCommentDisplay">/// set options for analysis</div>
+
+    void addPattern(const std::string& patt);
+    void recurse(bool doRecurse = true);
+
+    <div class ="toggleCommentDisplay">/// conduct depth first search</div>
+
+    void search();
+    void find(const std::string& path);
+
+    <div class ="toggleCommentDisplay">/// define what happens when a file or dir is encountered</div>
+
+    void doFile(const std::string& filename);
+    void doDir(const std::string& dirname);
+
+    <div class ="toggleCommentDisplay">/// extract traversal statistics </div>
+
+    size_t fileCount();
+    size_t dirCount();
+    void showStats();
+
+	const files& filesToProcess() const;
+
+  private:
+    std::string path_;
+    patterns patterns_;
+    size_t dirCount_ = 0;
+    size_t fileCount_ = 0;
+    bool recurse_ = false;
+
+	files filesToProcess_;
+  };</span>
+
+  <div class ="toggleCommentDisplay">///----&lt; construct DirExplorerN instance with default pattern &gt;-----</div>
+
+  inline DirExplorerN::DirExplorerN(const std::string& path) : path_(path)
+ <span class='toggleMethodDisplay'>  {
+    patterns_.push_back("*.*");
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; add specified patterns for selecting file names &gt;----------</div>
+
+  inline void DirExplorerN::addPattern(const std::string& patt)
+ <span class='toggleMethodDisplay'>  {
+    if (patterns_.size() == 1 && patterns_[0] == "*.*")
+      patterns_.pop_back();
+    patterns_.push_back(patt);
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; set option to recusively walk dir tree &gt;-------------------</div>
+
+  inline void DirExplorerN::recurse(bool doRecurse)
+ <span class='toggleMethodDisplay'>  {
+    recurse_ = doRecurse;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; start Depth First Search at path held in path_ &gt;-----------</div>
+
+  inline void DirExplorerN::search()
+ <span class='toggleMethodDisplay'>  {
+    find(path_);
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; search for directories and their files &gt;-------------------</div>
+  <div class ="toggleCommentDisplay">//*
+    Recursively finds all the dirs and files on the specified path,
+    executing doDir when entering a directory and doFile when finding a file
+  */</div>
+  inline void DirExplorerN::find(const std::string& path)
+ <span class='toggleMethodDisplay'>  {
+    <div class ="toggleCommentDisplay">/// show current directory</div>
+
+    std::string fpath = FileSystem::Path::getFullFileSpec(path);
+    doDir(fpath);
+
+    for (auto patt : patterns_)
+    {
+      std::vector&lt;std::string&gt; files = FileSystem::Directory::getFiles(fpath, patt);
+      for (auto f : files)
+      {
+        doFile(f);  <div class ="toggleCommentDisplay">/// show each file in current directory</div>
+		filesToProcess_.push_back(fpath + "\\" + f);
+      }
+    }
+
+    std::vector&lt;std::string&gt; dirs = FileSystem::Directory::getDirectories(fpath);
+    for (auto d : dirs)
+    {
+      if (d == "." || d == "..")
+        continue;
+      std::string dpath = fpath + "\\" + d;
+      if (recurse_)
+      {
+        find(dpath);   <div class ="toggleCommentDisplay">/// recurse into subdirectories</div>
+      }
+      else
+      {
+        doDir(dpath);  <div class ="toggleCommentDisplay">/// show subdirectories</div>
+      }
+    }
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; an application changes to enable specific file ops &gt;-------</div>
+
+  inline void DirExplorerN::doFile(const std::string& filename)
+ <span class='toggleMethodDisplay'>  {
+    ++fileCount_;
+   <div class ="toggleCommentDisplay">/// std::cout &lt;&lt; "\n  --   " &lt;&lt; filename;</div>
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; an application changes to enable specific dir ops &gt;--------</div>
+
+  inline void DirExplorerN::doDir(const std::string& dirname)
+ <span class='toggleMethodDisplay'>  {
+    ++dirCount_;
+    <div class ="toggleCommentDisplay">///std::cout &lt;&lt; "\n  ++ " &lt;&lt; dirname;</div>
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; return number of files processed &gt;-------------------------</div>
+
+  inline size_t DirExplorerN::fileCount()
+ <span class='toggleMethodDisplay'>  {
+    return fileCount_;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; return number of directories processed &gt;-------------------</div>
+
+  inline size_t DirExplorerN::dirCount()
+ <span class='toggleMethodDisplay'>  {
+    return dirCount_;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; show final counts for files and dirs &gt;---------------------</div>
+
+  inline void DirExplorerN::showStats()
+ <span class='toggleMethodDisplay'>  {
+    std::cout &lt;&lt; "\n\n  processed " &lt;&lt; fileCount_ &lt;&lt; " files in " &lt;&lt; dirCount_ &lt;&lt; " directories";
+  }</span>
+
+  inline const DirExplorerN::files& DirExplorerN::filesToProcess() const
+ <span class='toggleMethodDisplay'>  {
+	  <div class ="toggleCommentDisplay">/// TODO: insert return statement here</div>
+	  return filesToProcess_;
+  }</span>
+}
+
+</pre>
+</body>
+</html>
+

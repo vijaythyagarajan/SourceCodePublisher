@@ -1,0 +1,360 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="FileSystem.h.html">FileSystem.h</a>
+		<a href="CodeUtilities.h.html">CodeUtilities.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+#pragma once
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// DirExplorerE.h - directory explorer uses events                 //</div>
+<div class ="toggleCommentDisplay">/// ver 1.2                                                         //</div>
+<div class ="toggleCommentDisplay">/// Jim Fawcett, CSE687 - Object Oriented Design, Fall 2018         //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">//*
+* Package Operations:
+* -------------------
+* DirExplorerE provides a class, of the same name, that executes a
+* depth first search of a directory tree rooted at a specified path.
+* Each time it enters a directory, it invokes its member function
+* notifyDir, and for every file in that directory, it invokes notifyFile.
+* 
+*
+* We call this "Event Directory Explorer" because, when it carries
+* out its assigned responsibilities, it uses event interfaces,
+* IDirEvent and IFileEvent, to allow applications to decide what
+* processing should occur when the explorer encounters a directory
+* or file.  The application simply defines classes, derived from 
+* the event Interfaces, to supply that processing.  They then
+* create instances of those classes on the native heap, and pass
+* the resulting pointers to explorer's dirSubcribe and fileSubscribe
+* methods.
+* 
+* Another project in this solution does just that, in a different way.
+
+* - DirExplorer-Template:
+*     Applications provide template class parameters to define file
+*     and directory processing.
+*
+* Required Files:
+* ---------------
+* DirExplorerE.h, DirExplorerE.cpp
+* FileSystem.h, FileSystem.cpp      <div class ="toggleCommentDisplay">/// Directory and Path classes</div>
+* StringUtilities.h                 <div class ="toggleCommentDisplay">/// Title function</div>
+* CodeUtilities.h                   <div class ="toggleCommentDisplay">/// ProcessCmdLine class</div>
+*
+* Maintenance History:
+* --------------------
+* ver 1.2 : 19 Aug 2018
+* - moved method definitions to inlines below class declaration
+* - made done a virtual method and added a virtual destructor
+* ver 1.1 : 16 Aug 2018
+* - made no recursion default, added option /s for recursion
+* ver 1.0 : 13 Aug 2018
+* - first release
+*
+*/</div>
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include "../FileSystem/FileSystem.h"
+#include "../CodeUtilities/CodeUtilities.h"
+
+namespace FileSystem
+{
+  <div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////</div>
+  <div class ="toggleCommentDisplay">/// IFileEvent and IDirEvent interfaces</div>
+  <div class ="toggleCommentDisplay">/// - hooks for application event handlers to implement</div>
+
+  struct IDirEvent
+  {
+    virtual void execute(const std::string& dirname) = 0;
+ <span class='toggleMethodDisplay'>    virtual ~IDirEvent() {}</span>
+  };
+
+  struct IFileEvent
+  {
+    virtual void execute(const std::string& filename) = 0;
+ <span class='toggleMethodDisplay'>    virtual ~IFileEvent() {}</span>
+  };
+
+  <div class ="toggleCommentDisplay">////////////////////////////////////////////////////////////////////</div>
+  <div class ="toggleCommentDisplay">/// DirExplorerE class</div>
+  <div class ="toggleCommentDisplay">/// - defers application specific processing to application's</div>
+  <div class ="toggleCommentDisplay">///   event handlers</div>
+
+  class DirExplorerE
+ <span class='toggleClassDisplay'>   {
+  public:
+    using patterns = std::vector&lt;std::string&gt;;
+
+ <span class='toggleMethodDisplay'>    static std::string version() { return "ver1.2"; }</span>
+
+    DirExplorerE(const std::string& path);
+ <span class='toggleMethodDisplay'>    virtual ~DirExplorerE() {}</span>
+
+    <div class ="toggleCommentDisplay">/// provide hooks for handling events</div>
+
+    void dirSubScribe(IDirEvent* pDirSub);
+    void notifyDir(const std::string& dirname);
+    void fileSubScribe(IFileEvent* pFileSub);
+    void notifyFile(const std::string& filename);
+    
+    <div class ="toggleCommentDisplay">/// configure application processing</div>
+
+    void addPattern(const std::string& patt);
+    void hideEmptyDirectories(bool hide);
+    void maxItems(size_t numFiles);
+    void showAllInCurrDir(bool showAllCurrDirFiles=true);
+    bool showAllInCurrDir();
+    void recurse(bool doRecurse = true);
+    
+    <div class ="toggleCommentDisplay">/// navigation</div>
+
+    void search();
+    virtual void find(const std::string& path);
+    virtual bool done(bool reset = false);
+
+    <div class ="toggleCommentDisplay">/// display results</div>
+    virtual void showStats();
+
+  private:
+    std::vector&lt;std::shared_ptr&lt;IDirEvent&gt;&gt; dirSubscribers_;
+    std::vector&lt;std::shared_ptr&lt;IFileEvent&gt;&gt; fileSubscribers_;
+    std::string path_;
+    patterns patterns_;
+    bool hideEmptyDir_ = false;
+    bool showAll_ = false;
+    size_t maxItems_ = 0;
+    size_t dirCount_ = 0;
+    size_t fileCount_ = 0;
+    bool recurse_ = false;
+  };</span>
+
+  <div class ="toggleCommentDisplay">///----&lt; construct DirExplorerN instance with default pattern &gt;-----</div>
+
+  inline DirExplorerE::DirExplorerE(const std::string& path) : path_(path)
+ <span class='toggleMethodDisplay'>  {
+    patterns_.push_back("*.*");
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; subscribe for dir events &gt;---------------------------------</div>
+  <div class ="toggleCommentDisplay">//*
+  *  pDirSub must be a pointer to DirSub created on heap
+  */</div>
+  inline void DirExplorerE::dirSubScribe(IDirEvent* pDirSub)
+ <span class='toggleMethodDisplay'>  {
+    dirSubscribers_.push_back(std::shared_ptr&lt;IDirEvent&gt;(pDirSub));
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; notify dir event subscribers &gt;------------------------------</div>
+
+  inline void DirExplorerE::notifyDir(const std::string& dirname)
+ <span class='toggleMethodDisplay'>  {
+    ++dirCount_;
+    for (auto sub : dirSubscribers_)
+      sub-&gt;execute(dirname);
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; subscribe for file events &gt;---------------------------------</div>
+  <div class ="toggleCommentDisplay">//*
+  *  pFileSub must be a pointer to FileSub created on heap
+  */</div>
+  inline void DirExplorerE::fileSubScribe(IFileEvent* pFileSub)
+ <span class='toggleMethodDisplay'>  {
+    fileSubscribers_.push_back(std::shared_ptr&lt;IFileEvent&gt;(pFileSub));
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; notify file event subscribers &gt;-----------------------------</div>
+
+  inline void DirExplorerE::notifyFile(const std::string& filename)
+ <span class='toggleMethodDisplay'>  {
+    ++fileCount_;
+    for (auto sub : fileSubscribers_)
+    {
+      if (showAll_ || maxItems_ == 0 || fileCount_ &lt;= maxItems_)
+      {
+        sub-&gt;execute(filename);
+      }
+    }
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; add specified patterns for selecting file names &gt;----------</div>
+
+  inline void DirExplorerE::addPattern(const std::string& patt)
+ <span class='toggleMethodDisplay'>  {
+    if (patterns_.size() == 1 && patterns_[0] == "*.*")
+      patterns_.pop_back();
+    patterns_.push_back(patt);
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; set option to hide empty directories &gt;---------------------</div>
+
+  inline void DirExplorerE::hideEmptyDirectories(bool hide)
+ <span class='toggleMethodDisplay'>  {
+    hideEmptyDir_ = hide;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; set the maximum number of files to display &gt;---------------</div>
+
+  inline void DirExplorerE::maxItems(size_t numFiles)
+ <span class='toggleMethodDisplay'>  {
+    maxItems_ = numFiles;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; stop display before showing all files in dir &gt;-------------</div>
+
+  inline void DirExplorerE::showAllInCurrDir(bool showAllCurrDirFiles)
+ <span class='toggleMethodDisplay'>  {
+    showAll_ = showAllCurrDirFiles;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; stop display before showing all files in dir? &gt;------------</div>
+
+  inline bool DirExplorerE::showAllInCurrDir()
+ <span class='toggleMethodDisplay'>  {
+    return showAll_;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; set option to recusively walk dir tree &gt;-------------------</div>
+
+  inline void DirExplorerE::recurse(bool doRecurse)
+ <span class='toggleMethodDisplay'>  {
+    recurse_ = doRecurse;
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; start Depth First Search at path held in path_ &gt;-----------</div>
+
+  inline void DirExplorerE::search()
+ <span class='toggleMethodDisplay'>  {
+    find(path_);
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; search for directories and their files &gt;-------------------</div>
+  <div class ="toggleCommentDisplay">//*
+    Recursively finds all the dirs and files on the specified path,
+    executing notifyDir when entering a directory and notifyFile
+    when finding a file.
+  */</div>
+  inline void DirExplorerE::find(const std::string& path)
+ <span class='toggleMethodDisplay'>  {
+    if (done())  <div class ="toggleCommentDisplay">/// stop searching</div>
+      return;
+
+    bool hasFiles = false;
+    std::string fpath = FileSystem::Path::getFullFileSpec(path);
+    if (!hideEmptyDir_)
+    {
+      notifyDir(fpath);
+    }
+    for (auto patt : patterns_)
+    {
+      std::vector&lt;std::string&gt; files = FileSystem::Directory::getFiles(fpath, patt);
+      if (!hasFiles && hideEmptyDir_)
+      {
+        if (files.size() &gt; 0)
+        {
+          notifyDir(fpath);
+          hasFiles = true;
+        }
+      }
+      for (auto f : files)
+      {
+        notifyFile(f);
+      }
+    }
+
+    if (done())
+      return;
+
+    std::vector&lt;std::string&gt; dirs = FileSystem::Directory::getDirectories(fpath);
+    for (auto d : dirs)
+    {
+      if (d == "." || d == "..")
+        continue;
+      std::string dpath = fpath + "\\" + d;
+      if (recurse_)
+      {
+        find(dpath);
+      }
+      else
+      {
+        notifyDir(dpath);
+      }
+    }
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; show final counts for files and dirs &gt;---------------------</div>
+
+  inline void DirExplorerE::showStats()
+ <span class='toggleMethodDisplay'>  {
+    std::cout &lt;&lt; "\n\n  processed " &lt;&lt; fileCount_ &lt;&lt; " files in " &lt;&lt; dirCount_ &lt;&lt; " directories";
+    if (done(true))
+    {
+      std::cout &lt;&lt; "\n  stopped because max number of files exceeded";
+    }
+  }</span>
+  <div class ="toggleCommentDisplay">///----&lt; define conditions for stopping navigation &gt;----------------</div>
+
+  inline bool DirExplorerE::done(bool reset)
+ <span class='toggleMethodDisplay'>  {
+    return (0 &lt; maxItems_ && maxItems_ &lt; fileCount_);
+  }</span>
+}
+
+</pre>
+</body>
+</html>
+

@@ -1,0 +1,426 @@
+<!Doctype html >
+<html>
+<head>
+<style>
+body {
+padding:15px 40px;
+font-family: Consolas;
+font-weight: 600;
+font-size: 15px;
+}
+span{
+     display:inline-block;
+     font-family:Consolas;
+     font-size: 14px;
+    }
+
+div {
+     font-family:Consolas;
+     font-size: 14px;
+     display:inline-block;
+   }
+
+.btn-group {
+	position:fixed;
+	top : 0px;
+	right: 10px;
+     }
+
+    .toggleClassDisplay {
+    }
+
+    .toggleMethodDisplay {
+    }
+    .toggleCommentDisplay {
+ 	color: green;
+	font-family:Consolas;
+	font-size: 14px;
+    }
+    .keyWordClass {
+	color: blue;
+}
+</style>
+<script>
+      function toggleClass(className) {
+        let elems = document.getElementsByClassName(className);
+        if (elems === null) {
+          return;
+        }
+       for (let i = 0; i < elems.length; ++i) {
+          let displayProp = elems[i].style.display;
+          if (displayProp === 'none')
+            elems[i].style['display'] = "inline-block";
+          else
+            elems[i].style['display'] = "none";
+   
+        }
+      }
+  </script>
+</head>
+<body>
+		<h3> Dependencies:
+		<a href="AbstrSynTree.h.html">AbstrSynTree.h</a>
+		<a href="FileSystem.h.html">FileSystem.h</a>
+		<a href="DependencyAnalyser.h.html">DependencyAnalyser.h</a>
+		<a href="Display.h.html">Display.h</a>
+		<a href="ConverterPackage.h.html">ConverterPackage.h</a>
+		<a href="Executive.h.html">Executive.h</a>
+		</h3> 
+<h3>Project #2 </h3>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button onclick="toggleClass('toggleMethodDisplay')"> Show or Hide Method Contents</button>
+  <button onclick="toggleClass('toggleClassDisplay')"> Show or Hide Class Contents</button>
+  <button onclick="toggleClass('toggleCommentDisplay')"> Show or Hide Comments</button>
+  </div>
+<pre>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+<div class ="toggleCommentDisplay">/// Converter - ConverterFile Package   (Source Code Publisher)     //</div>
+<div class ="toggleCommentDisplay">/// Vijay Thyagarajan, CSE687 - Object Oriented Design, Spring 2019 //</div>
+<div class ="toggleCommentDisplay">//////////////////////////////////////////////////////////////////////</div>
+
+
+#include&lt;iostream&gt;
+#include&lt;algorithm&gt;
+#include&lt;string&gt;
+#include&lt;regex&gt;
+#include&lt;fstream&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;direct.h&gt;
+#include&lt;unordered_map&gt;
+
+#include"../CppParser/AbstractSyntaxTree/AbstrSynTree.h"
+#include"../DirectoryNavigator/FileSystem/FileSystem.h"
+#include"../DepedencyAnalyser/DependencyAnalyser.h"
+#include"../CppParser/Utilities/Utilities.h"
+#include"../CppParser/ScopeStack/ScopeStack.h"
+#include"../DepedencyAnalyser/KeywordsList.h"
+#include"../Display/Display.h"
+#include "ConverterPackage.h"
+#include"../Executive/Executive.h"
+
+using files = std::vector&lt;std::string&gt;;
+using ConvertedFilesList = std::vector&lt;std::string&gt;;
+
+using namespace CodeAnalysis;
+
+<div class ="toggleCommentDisplay">/// &lt;------- Method to convert the occurance of a string by another string  -----&gt; </div>
+std::string ConvertFile::replace_escapeCharacter(std::string const & inputString, std::string const & oldCharacterSet, std::string const & newCharacterSet)
+ <span class='toggleMethodDisplay'>{
+	return std::regex_replace(inputString, std::regex(oldCharacterSet), newCharacterSet);
+} </span>
+
+<div class ="toggleCommentDisplay">///&lt;-------  Method returns the files -----&gt; </div>
+const ConvertFile::ConverterFiles & ConvertFile::getFilesToConvert() 
+ <span class='toggleMethodDisplay'>{
+	return files;
+}</span>
+<div class ="toggleCommentDisplay">///&lt;---------- Method to create the publisher code into a html code -----------------&gt;</div>
+std::vector&lt;std::string&gt; ConvertFile::createPublisherCode(ConverterFiles & files) 
+ <span class='toggleMethodDisplay'>{
+	DependencyAnalyser  dpAnalyserObj_;
+	dpAnalyserObj_.considerFilesForDependencyAnalysis(files);
+	dependencyFileList =  dpAnalyserObj_.updateDependencyTable();
+	std::cout &lt;&lt; " Demonstrating Requirement 6: The selected files are converted into a html document by Converter package \n";
+	std::cout &lt;&lt; " Demonstrating Requirement 7: The Depenency analyser package is used to add the xml blocks to the comments, class and function blocks \n";
+	std::cout &lt;&lt; " \n Only the dependencies that is within the regex  and the current directory of the file used are displayed as file dependencies \n";
+	for (auto file : files) {
+	 std::vector&lt;std::string&gt; code = addXmlActionBlockForPublisherCode(checkEscapeCharacterInPublisherCode( createPublisherCodeStringFromFile(file)));
+	convertedFiles_.push_back(storeConvertedCode(mergeTemplateStringWithPublisherCodeString(createTemplateStringFromFile("../Template.txt"), code)));
+	}
+	return convertedFiles_;
+}</span>
+<div class ="toggleCommentDisplay">///&lt;-------------- Method to store the list of files -------------&gt;</div>
+void ConvertFile::storeFilesToConvert(const ConverterFiles & filesList)
+ <span class='toggleMethodDisplay'>{
+	files = filesList;
+}</span>
+
+<div class ="toggleCommentDisplay">///&lt;--------------- Method to access the regex used from the Executive package--------------&gt;</div>
+std::string ConvertFile::getRegexUsed()
+ <span class='toggleMethodDisplay'>{
+	return regex_;
+}</span>
+
+<div class ="toggleCommentDisplay">///&lt;------- Method to convert html template file into bag of strings  -----&gt; </div>
+
+files ConvertFile::createTemplateStringFromFile(std::string templateFileName)
+ <span class='toggleMethodDisplay'>{
+
+	std::ifstream xmlFile(templateFileName);
+	std::vector&lt;std::string&gt; xmlString;
+	std::string tempString;
+	
+	if (xmlFile.good() && xmlFile.is_open()) {
+		while (!xmlFile.eof()) {
+			std::getline(xmlFile, tempString);
+			xmlString.push_back(tempString);
+		}
+	}
+	xmlFile.close();
+
+	return xmlString;
+}</span>
+
+<div class ="toggleCommentDisplay">///&lt;------- Method to convert file  into bag of Strings  -----&gt; </div>
+files ConvertFile::createPublisherCodeStringFromFile(std::string publisherFileName) 
+ <span class='toggleMethodDisplay'>{
+	std::ifstream publisherCode(publisherFileName);
+	fileName = publisherFileName;
+
+	std::vector&lt;std::string&gt; publisherCodeString;
+	std::string tempString;
+	
+	if (publisherCode.good() && publisherCode.is_open()) {
+		while (!publisherCode.eof()) {
+			getline(publisherCode, tempString);
+			publisherCodeString.push_back(tempString);
+		}
+	}
+	publisherCode.close();
+
+	return publisherCodeString;
+}</span>
+<div class ="toggleCommentDisplay">///&lt;------- Method to check the presence of special characters in the file that needs to be converted and replace wit appropriate ones -----&gt; </div>
+files ConvertFile::checkEscapeCharacterInPublisherCode(std::vector&lt;std::string&gt; publisherCodeString)
+ <span class='toggleMethodDisplay'>{
+
+	for (auto it1 = publisherCodeString.begin(); it1 != publisherCodeString.end(); ++it1) {
+
+		if ((*it1).find("&lt;")) {
+			*it1 = replace_escapeCharacter((*it1), "&lt;", "&lt;");
+		}
+		if ((*it1).find("&gt;")) {
+			*it1 = replace_escapeCharacter((*it1), "&gt;", "&gt;");
+		}
+	}
+
+	return publisherCodeString;
+}</span>
+
+<div class ="toggleCommentDisplay">///&lt; ------- Method to Merge the template String and the strings of the file that needs to be converted -----&gt;</div>
+files ConvertFile::mergeTemplateStringWithPublisherCodeString(std::vector&lt;std::string&gt; templateString,std:: vector&lt;std::string&gt; publisherCodeString)
+ <span class='toggleMethodDisplay'>{
+	std::vector&lt;std::string&gt; mergedString;
+	for (auto it1 = templateString.begin(); it1 != templateString.end(); it1++) {
+		if ((*it1) == "&lt;pre&gt;") {
+			mergedString.push_back(*it1);
+			for (auto it2 = publisherCodeString.begin(); it2 != publisherCodeString.end(); ++it2) {
+				mergedString.push_back(*it2);
+			}
+			it1++;
+		}
+		mergedString.push_back((*it1));
+	}
+	return mergedString;
+}</span>
+
+int ConvertFile::dirExists(const char *path)
+ <span class='toggleMethodDisplay'>{
+	struct stat info;
+
+	if (stat(path, &info) != 0)
+		return 0;
+	else if (info.st_mode & S_IFDIR)
+		return 1;
+	else
+		return 0;
+}</span>
+
+<div class ="toggleCommentDisplay">/// &lt;------- Method to check and store the converted html files -----&gt; </div>
+std::string ConvertFile::storeConvertedCode(std::vector&lt;std::string&gt; mergedCode) 
+ <span class='toggleMethodDisplay'>{
+	std::cout &lt;&lt; "Adding Dependencies to the publisher code \n \n";
+	std::ofstream out;
+	const char *dPath = "./convertedPages/";
+	if (!dirExists(dPath)){
+		int directoryCreated = _mkdir(dPath);
+		if (directoryCreated) {
+			std::cout &lt;&lt; " The convertedPages folder is created to save the converted files\n";
+		}
+	}
+	Executive exeObj_;
+	std::string regex_ = getRegexUsed();
+	std::regex r(regex_);
+	std::string file = FileSystem::Path::getName(fileName);
+	std::string storagePath = dPath+ file + ".html";
+	
+	out.open(storagePath);
+
+	for (auto it1 = mergedCode.begin(); it1 != mergedCode.end(); it1++) {
+		out &lt;&lt; *it1 &lt;&lt; std::endl;
+		if (*it1 == "&lt;body&gt;") {
+			if (!(FileSystem::Path::getName(fileName).empty())) {
+				auto checkIterator = dependencyFileList.find(FileSystem::Path::getName(fileName));
+				std::string temp;
+				if (checkIterator != dependencyFileList.end()) {
+					out &lt;&lt; "		&lt;h3&gt; Dependencies:\n";
+					for (auto files : (checkIterator-&gt;second)) {
+						if (std::regex_match(FileSystem::Path::getName(files), r)) {
+							files.erase(std::remove(files.begin(), files.end(), '"'), files.end());
+							files.erase(std::remove(files.begin(), files.end(), ' '), files.end());
+							out &lt;&lt; "		&lt;a href=\"" &lt;&lt; FileSystem::Path::getName(files) &lt;&lt; ".html\"&gt;" &lt;&lt; FileSystem::Path::getName(files) &lt;&lt; "&lt;/a&gt;" &lt;&lt; std::endl;
+						}	
+					}
+					out &lt;&lt; "		&lt;/h3&gt; \n";
+				}
+			}
+		}
+	}
+	out.close();
+	return FileSystem::Path::getFullFileSpec(storagePath);
+}</span>
+<div class ="toggleCommentDisplay">///&lt;------------------ adding the xml characters to the publisher code ------------------------&gt;</div>
+std::vector&lt;std::string&gt; ConvertFile::addXmlActionBlockForPublisherCode(std::vector&lt;std::string&gt; mergerCode) 
+ <span class='toggleMethodDisplay'>{
+	Keyword keyListObj;
+	<div class ="toggleCommentDisplay">///for class &lt;span class="toggleClassDisplay"&gt; and &lt;/span&gt; str.insert (str.end(),3,'.'); str.insert(6,str2);  </div>
+	std::string ClassNodeType = "class"; std::string functionNodeType = "function";
+	std::vector&lt;std::string&gt; mergedString;
+	DependencyAnalyser dpAnalyserObj_;
+	std::cout &lt;&lt; "The Dendency analyser instance is created and it performing dependency analysis for the file: " &lt;&lt; fileName &lt;&lt;"\n";
+	dpAnalyserObj_.getAllDependencies(fileName);
+	value  = dpAnalyserObj_.getParsedResult();
+	std::cout &lt;&lt; "Adding xml to the Function and Class blocks in the publisher code \n";
+	while (value.size() &gt; 0) {
+		<div class ="toggleCommentDisplay">///std::cout &lt;&lt; value.top()-&gt;type &lt;&lt; std::endl;</div>
+		Node *testNode = value.top();
+		keyListObj.updateKeyWordSet(testNode-&gt;name);
+		size_t size = testNode-&gt;endLineCount - testNode-&gt;startLineCount + 1;
+		if (testNode-&gt;type == ClassNodeType) {
+			<div class ="toggleCommentDisplay">///&lt;button id = "hide-button"&gt;Hide button&lt; / button&gt;</div>
+			std::string tempStart =  mergerCode[testNode-&gt;startLineCount - 1].insert(0, " &lt;span class='toggleClassDisplay'&gt; ");
+			mergerCode[testNode-&gt;startLineCount - 1] = tempStart;
+			std::string tempEnd = mergerCode[testNode-&gt;endLineCount - 2] + "&lt;/span&gt;";
+			mergerCode[testNode-&gt;endLineCount-2] = tempEnd;
+		}
+		else if (testNode-&gt;type == functionNodeType) {
+			std::string tempStart = mergerCode[testNode-&gt;startLineCount - 1].insert(0, " &lt;span class='toggleMethodDisplay'&gt;");
+			mergerCode[testNode-&gt;startLineCount - 1] = tempStart;
+			std::string tempEnd = mergerCode[testNode-&gt;endLineCount - 1] + "&lt;/span&gt;";
+			mergerCode[testNode-&gt;endLineCount - 1] = tempEnd;
+		}
+			value.pop();
+
+	}
+
+	std::cout &lt;&lt; "Adding xml to the comment blocks in the publisher code \n";
+	handingCommentsInSourceCode(mergerCode);
+	
+	<div class ="toggleCommentDisplay">///std::vector&lt;std::string&gt; keyList = keyListObj.getKeyWordList();</div>
+
+	<div class ="toggleCommentDisplay">///handlingKeyWordsInPublisherCode(mergerCode, keyList);</div>
+	
+	return mergerCode;
+}</span>
+<div class ="toggleCommentDisplay">///&lt;------------ method to handle the comments in the publisher code ------------&gt;</div>
+void ConvertFile::handingCommentsInSourceCode(std::vector&lt;std::string&gt; & mergerCode)
+ <span class='toggleMethodDisplay'>{
+	size_t count = 0;
+	static bool commentCondition = true;
+	if (mergerCode.size() &gt; 0) {
+
+		for (auto line : mergerCode) {
+			size_t posOfSingleSlash = line.find('/');
+			if ((posOfSingleSlash != line.npos) && (posOfSingleSlash != line.size() - 1) &&(line[posOfSingleSlash + 1] == '/') ){
+				line = line.insert(posOfSingleSlash, "&lt;div class =\"toggleCommentDisplay\"&gt;/");
+				line += "&lt;/div&gt;";
+				mergerCode[count] = line;
+			}
+			else
+			{
+				size_t findLink = line.find("size_t posOfOpenComment");
+				if (findLink == line.npos) {
+					size_t posOfOpenComment = line.find("/*");
+					size_t posOfCloseComment = line.find("*/");
+					if (posOfOpenComment != line.npos) {
+						commentCondition = true;
+						line = line.insert(posOfOpenComment, "&lt;div class =\"toggleCommentDisplay\"&gt;/");
+						mergerCode[count] = line;
+					}
+					if (posOfCloseComment != line.npos && commentCondition) {
+						line += "&lt;/div&gt;";
+						mergerCode[count] = line;
+						commentCondition = false;
+					}
+				}
+			}
+			count++;
+		}
+	}
+}</span>
+<div class ="toggleCommentDisplay">///&lt;-------------------------- find the word in a string ----------------------------&gt;</div>
+ <span class='toggleMethodDisplay'>int ConvertFile::FindSubstringindex(std::string *parentstring,std::string *substring) {
+	int e = 0, indx = -1;
+	const char *parentcstring = parentstring-&gt;c_str();
+	const char *csubstring = substring-&gt;c_str();
+
+	for (size_t i = 0; i &lt; strlen(parentcstring); i++) {
+		if (parentcstring[i] == csubstring[e]) {
+			if (e == 0) {
+				std::string temp = parentstring-&gt;substr(i, strlen(csubstring));
+				<div class ="toggleCommentDisplay">///</div>
+				if ((temp == *substring) &&  (isspace(parentcstring[i++ + strlen(csubstring)]))) {
+					indx = i;
+					return indx;
+				}
+			}
+			e = 0;
+
+		}
+	}
+	return -1;
+}</span>
+<div class ="toggleCommentDisplay">///&lt;------------------------------------ adding the xml to the key word in the publisher code ---------------------------&gt;</div>
+void ConvertFile::handlingKeyWordsInPublisherCode(std::vector&lt;std::string&gt; & mergerCode, std::vector&lt;std::string&gt; keyWordList)
+ <span class='toggleMethodDisplay'>{
+	for (size_t i = 0 ; i &lt; mergerCode.size(); i++) {
+		for (auto key : keyWordList) {
+			std::string replaceString = "&lt;div class = \"keyWordClass\"&gt;" + key + "&lt;/div&gt;";
+		    
+			mergerCode[i] = ReplaceStringInPlace(mergerCode[i], key, replaceString);
+		}
+	}
+}</span>
+<div class ="toggleCommentDisplay">///&lt;--------- updating the regex ---------------&gt;</div>
+void ConvertFile::updateRegex(std::string regex)
+ <span class='toggleMethodDisplay'>{
+	regex_ = regex;
+}</span>
+
+<div class ="toggleCommentDisplay">///&lt;------------------------- replace the occurance of a string with another -------------------------------&gt;</div>
+std::string ConvertFile::ReplaceStringInPlace(std::string & subject,std::string & search,std::string  replace)
+ <span class='toggleMethodDisplay'>{
+	size_t pos = 0;
+	while ((pos = FindSubstringindex(&subject,&search)) != std::string::npos) {
+		subject.replace(pos-1, search.length(), replace);
+		pos += replace.length();
+	}
+	return subject;
+}</span>
+
+<div class ="toggleCommentDisplay">///-----------------------------&lt; Test Stub  for Converter package &gt;----------------------------------------</div>
+#ifdef TEST_CONVERTERPACKAGE
+
+int main()
+ <span class='toggleMethodDisplay'>{
+ <div class ="toggleCommentDisplay">/// creating the instance of the class ConvertFile()</div>
+ ConvertFile convertObj_;
+ <div class ="toggleCommentDisplay">/// variable to store files </div>
+ files fileToTest;
+ <div class ="toggleCommentDisplay">/// Sample files to test the convertClass functionality</div>
+ fileToTest.push_back("Convert.cpp");
+ fileToTest.push_back("Convert.h");
+ convertObj_.createPublisherCode(fileToTest);
+
+ return 0;
+}</span>
+
+#endif  
+
+
+
+
+</pre>
+</body>
+</html>
+
